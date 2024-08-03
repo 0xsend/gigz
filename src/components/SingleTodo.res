@@ -1,7 +1,7 @@
 module Query = %relay(`
   query SingleTodoQuery($id: ID!, $showMore: Boolean!) {
     node(id: $id) {
-      ... on TodoItem {
+      ... on Todo {
         ...SingleTodoDisplay_todo @arguments(showMore: $showMore)
       }
     }
@@ -13,7 +13,7 @@ let make = (~queryRef) => {
   let data = Query.usePreloaded(~queryRef)
 
   switch data.node {
-  | Some(TodoItem({fragmentRefs})) => <SingleTodoDisplay todo=fragmentRefs />
+  | Some(Todo({fragmentRefs})) => <SingleTodoDisplay todo=fragmentRefs />
   | _ => React.string("Oops, did not find todo!")
   }
 }
