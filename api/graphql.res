@@ -11,12 +11,3 @@ let default = createYoga({
     }
   },
 })
-
-//@TODO: remove when vercel serverless functions are setup
-let server = NodeHttpServer.createServer(default)
-
-let port = 4000
-
-server->NodeHttpServer.listen(port, () => {
-  Console.info(`Server is running on http://localhost:${port->Int.toString}/api/graphql`)
-})

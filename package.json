@@ -18,7 +18,7 @@
     "dev:resgraph": "resgraph watch",
     "dev:relay": "rescript-relay-compiler --watch",
     "dev:rescript": "rescript build -w",
-    "schema": "npx -y get-graphql-schema http://localhost:4000/api/graphql > schema.graphql",
+    "schema": "npx -y get-graphql-schema http://localhost:3000/api/graphql > schema.graphql",
     "setup": "npm run build:relay && npm run router:generate && npm run build:rescript",
     "postinstall": "npm run setup"
   },
@@ -40,6 +40,7 @@
     "rescript-relay-router": "1.4.1",
     "rollup-plugin-visualizer": "5.12.0",
     "tailwindcss": "3.4.6",
+    "vercel": "^35.2.3",
     "vite": "5.3.4",
     "vite-plugin-html": "3.2.2"
   },
