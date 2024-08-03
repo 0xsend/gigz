@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:relay && npm run router:generate && npm run build:rescript && npm run build:vite",
+    "build:resgraph": "resgraph build",
     "build:relay": "rescript-relay-compiler",
     "build:rescript": "rescript build -with-deps",
     "build:vite": "vite build --outDir dist/client",
@@ -14,6 +15,7 @@
     "router:generate": "rescript-relay-router generate",
     "dev": "concurrently 'npm:dev:*'",
     "dev:vite": "vite",
+    "dev:resgraph": "resgraph watch",
     "dev:relay": "rescript-relay-compiler --watch",
     "dev:rescript": "rescript build -w",
     "schema": "npx -y get-graphql-schema http://localhost:4000/graphql > schema.graphql",
@@ -27,7 +29,7 @@
     "@vitejs/plugin-react": "4.3.1",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
-    "graphql": "16.2.0",
+    "graphql": "^16.9.0",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -42,7 +44,9 @@
     "vite-plugin-html": "3.2.2"
   },
   "dependencies": {
-    "graphql-client-example-server": "^1.5.2"
+    "graphql-client-example-server": "^1.5.2",
+    "graphql-yoga": "^5.6.2",
+    "resgraph": "^0.10.0"
   },
   "packageManager": "yarn@4.3.1"
 }
