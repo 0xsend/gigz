@@ -4,18 +4,24 @@ module Query = %relay(`
   }
 `)
 
-let links = [("Todos", Routes.Root.Todos.Route.makeLink())]
+let links = [("Show Gigs", Routes.Root.Todos.Route.makeLink())]
 
 @react.component
 let make = (~queryRef, ~children) => {
   let data = Query.usePreloaded(~queryRef)
 
   <div className="p-6">
-    <h1 className="text-4xl"> {React.string("My fine site")} </h1>
-    <div className="flex flex-row">
+    <div className="f-1 w-full justify-center items-center">
+      <div className="w-full max-w-80 mx-auto">
+        <Logo />
+      </div>
+    </div>
+    <div className="flex flex-row py-2 ">
       {links
       ->Array.map(((label, link)) =>
-        <RelayRouter.Link key=label to_=link> {React.string(label)} </RelayRouter.Link>
+        <RelayRouter.Link className="p-4 rounded-md bg-[#40FB50] text-black" key=label to_=link>
+          {React.string(label)}
+        </RelayRouter.Link>
       )
       ->React.array}
     </div>
