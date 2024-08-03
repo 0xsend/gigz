@@ -20,3 +20,4 @@ src/__generated__/**
 
 #yarn
 install-state.gz
+.vercel

@@ -1,3 +1,6 @@
+@val @scope(("import", "meta", "env"))
+external vercelUrl: option<string> = "VITE_VERCEL_URL"
+
 let fetchQuery: RescriptRelay.Network.fetchFunctionPromise = async (
   operation,
   variables,
@@ -7,7 +10,9 @@ let fetchQuery: RescriptRelay.Network.fetchFunctionPromise = async (
   open Fetch
 
   let res = await fetch(
-    "http://localhost:4000/api/graphql",
+    vercelUrl->Option.mapOr("http://localhost:3000/api/graphql", url =>
+      `https://${url}/api/graphql`
+    ),
     {
       method: #POST,
       headers: Headers.fromArray([("content-type", "application/json"), ("x-user-id", "1")]),
