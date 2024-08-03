@@ -1,5 +1,5 @@
 module TodoFragment = %relay(`
-  fragment SingleTodoDisplay_todo on TodoItem
+  fragment SingleTodoDisplay_todo on Todo
   @refetchable(queryName: "SingleTodoDisplayRefetchQuery")
   @argumentDefinitions(showMore: { type: "Boolean", defaultValue: false }) {
     id
@@ -10,12 +10,17 @@ module TodoFragment = %relay(`
 `)
 
 module UpdateTodoItemMutation = %relay(`
-  mutation SingleTodoDisplay_UpdateTodoItemMutation(
-    $input: UpdateTodoItemInput!
-  ) {
-    updateTodoItem(input: $input) {
-      updatedTodoItem {
-        completed
+  mutation SingleTodoDisplay_UpdateTodoItemMutation($input: TodoUpdateInput!) {
+    todoUpdate(input: $input) {
+      ... on TodoUpdateResult {
+        ... on TodoUpdateResultOk {
+          updatedTodo {
+            completed
+          }
+        }
+        ... on TodoUpdateResultError {
+          message
+        }
       }
     }
   }
@@ -26,11 +31,11 @@ let make = (~todo) => {
   let (todo, refetch) = TodoFragment.useRefetchable(todo)
   let (mutate, isMutating) = UpdateTodoItemMutation.use()
   let (isRefetching, startTransition) = React.useTransition()
-  let completed = todo.completed->Option.getOr(false)
+  let completed = todo.completed
   let {setParams} = Routes.Root.Todos.Single.Route.useQueryParams()
   let isShowingMore = todo.isShowingMore->Option.isSome
 
-  <div>
+  <div className="border-2">
     <p> {React.string(todo.text)} </p>
     <div className="p-2"> {React.string(completed ? "Completed" : "Not completed")} </div>
     {if isShowingMore {
@@ -38,15 +43,15 @@ let make = (~todo) => {
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         disabled=isMutating
         onClick={_ => {
-          mutate(
+          let _ = mutate(
             ~variables={
               input: {
-                id: todo.id,
+                todoId: todo.id,
                 completed: !completed,
                 text: todo.text,
               },
             },
-          )->RescriptRelay.Disposable.ignore
+          )
         }}>
         {React.string(completed ? "Uncomplete" : "Complete")}
       </button>

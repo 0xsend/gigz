@@ -5,8 +5,8 @@ module TododsFragment = %relay(`
     first: { type: "Int", defaultValue: 5 }
     after: { type: "String" }
   ) {
-    todosConnection(first: $first, after: $after)
-      @connection(key: "TodosListDisplay_todos_todosConnection") {
+    listTodos(first: $first, after: $after)
+      @connection(key: "TodosListDisplay_todos_listTodos") {
       edges {
         node {
           ...TodosListItem_todo
@@ -22,7 +22,7 @@ let make = (~todos) => {
   let todos = TododsFragment.use(todos)
 
   <div>
-    {todos.todosConnection
+    {todos.listTodos
     ->TododsFragment.getConnectionNodes
     ->Array.map(todo => <TodosListItem todo={todo.fragmentRefs} key=todo.id />)
     ->React.array}

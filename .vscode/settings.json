@@ -1,0 +1,5 @@
+{
+  "explorer.fileNesting.patterns": {
+    "*.res": "${capture}.js, ${capture}.bs.js, ${capture}.bs.*, ${capture}.resi, ${capture}.mjs"
+  }
+}

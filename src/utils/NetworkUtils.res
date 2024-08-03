@@ -7,10 +7,10 @@ let fetchQuery: RescriptRelay.Network.fetchFunctionPromise = async (
   open Fetch
 
   let res = await fetch(
-    "http://localhost:4000/graphql",
+    "http://localhost:4000/api/graphql",
     {
       method: #POST,
-      headers: Headers.fromArray([("content-type", "application/json")]),
+      headers: Headers.fromArray([("content-type", "application/json"), ("x-user-id", "1")]),
       body: Body.string(
         {"query": operation.text, "variables": variables}
         ->JSON.stringifyAny

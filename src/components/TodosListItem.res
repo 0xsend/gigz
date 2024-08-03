@@ -1,5 +1,5 @@
 module TodoFragment = %relay(`
-  fragment TodosListItem_todo on TodoItem {
+  fragment TodosListItem_todo on Todo {
     text
     id
   }

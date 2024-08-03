@@ -1,8 +1,6 @@
 module QueryFragment = %relay(`
   fragment LayoutDisplay_query on Query {
-    siteStatistics {
-      currentVisitorsOnline
-    }
+    currentTime
   }
 `)
 
@@ -12,7 +10,9 @@ let make = (~query, ~children) => {
 
   <>
     <div className="my-4">
-      {React.string(query.siteStatistics.currentVisitorsOnline->Int.toString)}
+      {`Unix Time: ${query.currentTime->Option.mapOr("0", time =>
+          Float.toString(time)
+        )}`->React.string}
     </div>
     <div> {children} </div>
   </>

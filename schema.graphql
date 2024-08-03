@@ -1,72 +1,26 @@
-"""
-Directs the executor to defer this fragment when the `if` argument is true or undefined.
-"""
-directive @defer(
-  """Deferred when true or undefined."""
-  if: Boolean
-
-  """Unique name"""
-  label: String
-) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behavior of this scalar."""
+  url: String!
+) on SCALAR
 
 """
-Directs the executor to stream plural fields when the `if` argument is true or undefined.
+Indicates exactly one field must be supplied and this field must not be `null`.
 """
-directive @stream(
-  """Stream when true or undefined."""
-  if: Boolean
-
-  """Unique name"""
-  label: String
-
-  """Number of items to return immediately"""
-  initialCount: Int = 0
-) on FIELD
-
-input AddTodoItemInput {
-  text: String!
-  clientMutationId: String
-}
-
-type AddTodoItemPayload {
-  addedTodoItem: TodoItem
-  addedTodoItemEdge: TodoItemEdge
-  clientMutationId: String
-}
-
-union AssigneeType = User | WorkingGroup
-
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
-`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
-8601 standard for representation of dates and times using the Gregorian calendar.
-"""
-scalar DateTime
-
-input DeleteTodoItemInput {
-  id: ID!
-  clientMutationId: String
-}
-
-type DeleteTodoItemPayload {
-  deletedTodoItemId: ID
-  clientMutationId: String
-}
-
-type DeleteTodoSimple {
-  deletedTodoItemId: ID!
-}
+directive @oneOf on INPUT_OBJECT
 
 type Mutation {
-  addTodoItem(input: AddTodoItemInput!): AddTodoItemPayload
-  updateTodoItem(input: UpdateTodoItemInput!): UpdateTodoItemPayload
-  deleteTodoItem(input: DeleteTodoItemInput!): DeleteTodoItemPayload
-  addTodoSimple(text: String!): TodoItem!
-  updateTodoSimple(id: ID!, text: String!, completed: Boolean): TodoItem
-  deleteTodoSimple(id: ID!): DeleteTodoSimple
+  """Add a new Todo item."""
+  todoAdd(input: TodoAddInput!): TodoAddResult!
+
+  """Delete a todo."""
+  todoDelete(todoId: ID!): TodoDeleteResult!
+
+  """Update a todo."""
+  todoUpdate(input: TodoUpdateInput!): TodoUpdateResult!
 }
 
-"""An object with an ID"""
+"""An object with an ID."""
 interface Node {
   """The id of the object."""
   id: ID!
@@ -74,6 +28,9 @@ interface Node {
 
 """Information about pagination in a connection."""
 type PageInfo {
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+
   """When paginating forwards, are there more items?"""
   hasNextPage: Boolean!
 
@@ -82,182 +39,107 @@ type PageInfo {
 
   """When paginating backwards, the cursor to continue."""
   startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
 }
 
 type Query {
-  """Fetches an object given its ID"""
-  node(
-    """The ID of an object"""
-    id: ID!
-  ): Node
-  userById(id: ID!): User
-  siteStatistics: SiteStatistics!
-  ticketsConnection(
-    status: TicketStatus
+  """The current time on the server, as a timestamp."""
+  currentTime: Float
 
-    """Returns the items in the list that come after the specified cursor."""
-    after: String
+  """List todos."""
+  listTodos(after: String, before: String, completed: Boolean, filterText: String, first: Int, last: Int): TodoConnection
 
-    """Returns the first n items from the list."""
-    first: Int
+  """The currently logged in user."""
+  me: User!
 
-    """Returns the items in the list that come before the specified cursor."""
-    before: String
+  """Fetches an object given its ID."""
+  node(id: ID!): Node
 
-    """Returns the last n items from the list."""
-    last: Int
-  ): TicketConnection!
-  tickets(status: TicketStatus, limit: Int!, offset: Int!): TicketsPaginated!
-  todosConnection(
-    """Returns the items in the list that come after the specified cursor."""
-    after: String
-
-    """Returns the first n items from the list."""
-    first: Int
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String
-
-    """Returns the last n items from the list."""
-    last: Int
-  ): TodoItemConnection!
-  todos(limit: Int!, offset: Int!): TodosPaginated!
-  allTodos: [TodoItem!]!
+  """Fetches objects given their IDs."""
+  nodes(ids: [ID!]!): [Node]!
 }
 
-type SiteStatistics implements Node {
-  """The ID of an object"""
-  id: ID!
-  weeklySales: Float!
-  weeklyOrders: Int!
-  currentVisitorsOnline: Int!
-}
-
-type Subscription {
-  siteStatisticsUpdated: SiteStatistics
-}
-
-type Ticket implements Node {
-  """The ID of an object"""
-  id: ID!
-  dbId: ID!
-  assignee: AssigneeType
-  status: TicketStatus!
-  subject: String!
-  lastUpdated: DateTime
-  trackingId: String!
-}
-
-"""A connection to a list of items."""
-type TicketConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [TicketEdge]
-}
-
-"""An edge in a connection."""
-type TicketEdge {
-  """The item at the end of the edge"""
-  node: Ticket
-
-  """A cursor for use in pagination"""
-  cursor: String!
-}
-
-type TicketsPaginated {
-  total: Int!
-  hasNextPage: Boolean!
-  results: [Ticket!]!
-}
-
-enum TicketStatus {
-  Done
-  Progress
-  OnHold
-  Rejected
-}
-
-type TodoItem implements Node {
-  """The ID of an object"""
-  id: ID!
-  dbId: ID!
-  completed: Boolean
-  text: String!
-}
-
-"""A connection to a list of items."""
-type TodoItemConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [TodoItemEdge]
-}
-
-"""An edge in a connection."""
-type TodoItemEdge {
-  """The item at the end of the edge"""
-  node: TodoItem
-
-  """A cursor for use in pagination"""
-  cursor: String!
-}
-
-type TodosPaginated {
-  total: Int!
-  hasNextPage: Boolean!
-  results: [TodoItem!]!
-}
-
-input UpdateTodoItemInput {
-  id: ID!
-  text: String!
+"""A single todo item."""
+type Todo implements Node {
+  """Whether the todo is completed or not."""
   completed: Boolean!
-  clientMutationId: String
+
+  """The id of the object."""
+  id: ID!
+
+  """The text of the todo item."""
+  text: String!
 }
 
-type UpdateTodoItemPayload {
-  updatedTodoItem: TodoItem
-  clientMutationId: String
+input TodoAddInput {
+  completed: Boolean!
+  text: String!
+}
+
+union TodoAddResult = TodoAddResultError | TodoAddResultOk
+
+type TodoAddResultError {
+  reason: String!
+}
+
+type TodoAddResultOk {
+  addedTodo: Todo!
+}
+
+"""A connection to a todo."""
+type TodoConnection {
+  """A list of edges."""
+  edges: [TodoEdge]
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+union TodoDeleteResult = TodoDeleteResultError | TodoDeleteResultOk
+
+type TodoDeleteResultError {
+  reason: String!
+}
+
+type TodoDeleteResultOk {
+  deletedTodoId: ID!
+}
+
+"""An edge to a todo."""
+type TodoEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Todo
+}
+
+"""Input for updating a todo."""
+input TodoUpdateInput {
+  """Whether the todo is completed or not."""
+  completed: Boolean
+
+  """What text the todo has."""
+  text: String
+
+  """The id of the todo to update."""
+  todoId: ID!
+}
+
+union TodoUpdateResult = TodoUpdateResultError | TodoUpdateResultOk
+
+type TodoUpdateResultError {
+  """What went wrong updating the todo."""
+  message: String!
+}
+
+type TodoUpdateResultOk {
+  """The todo that was updated."""
+  updatedTodo: Todo!
 }
 
 type User implements Node {
-  """The ID of an object"""
+  """The id of the object."""
   id: ID!
-  dbId: ID!
-  avatarUrl: String
-  fullName: String!
-}
-
-"""A connection to a list of items."""
-type UserConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [UserEdge]
-}
-
-"""An edge in a connection."""
-type UserEdge {
-  """The item at the end of the edge"""
-  node: User
-
-  """A cursor for use in pagination"""
-  cursor: String!
-}
-
-type WorkingGroup implements Node {
-  """The ID of an object"""
-  id: ID!
-  dbId: ID!
   name: String!
-  membersConnection: UserConnection
-  members(limit: Int!, offset: Int!): [User]
 }
 
