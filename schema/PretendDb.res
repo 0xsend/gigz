@@ -13,8 +13,8 @@ type user = {
 let todosIdSequence = ref(3)
 
 let todos: array<todo> = [
-  {id: "1", text: "Make the wise decision to start using ResGraph", completed: true},
-  {id: "2", text: "Ship ResGraph to production", completed: false},
+  {id: "1", text: "Make the wise decision to start using Gigz", completed: true},
+  {id: "2", text: "Ship Gigz to production", completed: false},
 ]
 
 let users: array<user> = [{id: "1", name: "Test User"}]
