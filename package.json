@@ -43,5 +43,6 @@
   },
   "dependencies": {
     "graphql-client-example-server": "^1.5.2"
-  }
+  },
+  "packageManager": "yarn@4.3.1"
 }
