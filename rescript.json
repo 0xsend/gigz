@@ -10,22 +10,38 @@
     {
       "dir": "src",
       "subdirs": true
+    },
+    {
+      "dir": "api",
+      "subdirs": true
+    },
+    {
+      "dir": "schema",
+      "subdirs": true
     }
   ],
   "package-specs": [
     {
-      "module": "es6",
+      "module": "esmodule",
       "in-source": true
     }
   ],
   "suffix": ".mjs",
-  "ppx-flags": [["rescript-relay/ppx", "-uncurried"]],
+  "ppx-flags": [
+    [
+      "rescript-relay/ppx",
+      "-uncurried"
+    ]
+  ],
   "bs-dependencies": [
+    "resgraph",
     "@rescript/react",
     "rescript-relay",
     "rescript-relay-router",
     "@rescript/core",
     "@glennsl/rescript-fetch"
   ],
-  "bsc-flags": ["-open RescriptCore"]
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
 }

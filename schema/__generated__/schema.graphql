@@ -1,0 +1,6 @@
+type Query {
+
+  """The current time on the server, as a timestamp."""
+  currentTime: Float
+}
+
