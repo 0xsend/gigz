@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "chenglou92.rescript-vscode",
+    "bradlc.vscode-tailwindcss",
+    "gabrielnordeborn.vscode-rescript-relay",
+    "gabrielnordeborn.vscode-rescript-edgedb",
+    "gabrielnordeborn.vscode-resgraph"
+  ]
+}
