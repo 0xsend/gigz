@@ -1,5 +1,5 @@
 {
-  "name": "rescript-relay-starter",
+  "name": "gigz",
   "version": "1.0.0",
   "engines": {
     "node": ">=20"
@@ -21,11 +21,12 @@
     "dev:relay": "rescript-relay-compiler --watch",
     "dev:rescript": "rescript build -w",
     "schema": "npx -y get-graphql-schema http://localhost:3000/api/graphql > schema.graphql",
-    "setup": "npm run build:relay && npm run router:generate && npm run build:rescript",
+    "setup": "npm run build:edgedb && npm run build:resgraph && npm run build:relay && npm run router:generate && npm run build:rescript",
     "postinstall": "npm run setup"
   },
   "devDependencies": {
     "@glennsl/rescript-fetch": "^0.2.0",
+    "@greenlabs/ppx-spice": "^0.2.1",
     "@rescript/core": "1.5.2",
     "@rescript/react": "0.12.2",
     "@vitejs/plugin-react": "4.3.1",
