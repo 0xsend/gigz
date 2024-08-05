@@ -9,7 +9,35 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
+enum ChainId {
+  Mainnet
+  Base
+  BaseSepolia
+}
+
+"""Request to open a sendpay session"""
+input Input {
+  """The chain id to use for the session"""
+  chainId: ChainId
+
+  """The ethereum address to receive the confirmation tx"""
+  confirmationAddress: String!
+
+  """The identifier to request a session for"""
+  identifier: String!
+
+  """The type of identifier"""
+  lookupType: LookupType!
+}
+
+enum LookupType {
+  tag
+  sendid
+}
+
 type Mutation {
+  makeSendpaySession(input: Input!): Result!
+
   """Add a new Todo item."""
   todoAdd(input: TodoAddInput!): TodoAddResult!
 
@@ -56,6 +84,19 @@ type Query {
 
   """Fetches objects given their IDs."""
   nodes(ids: [ID!]!): [Node]!
+}
+
+union Result = ResultError | ResultOk
+
+type ResultError {
+  name: String!
+  reason: String!
+}
+
+type ResultOk {
+  identifier: String!
+  lookupType: LookupType!
+  sessionId: String!
 }
 
 """A single todo item."""

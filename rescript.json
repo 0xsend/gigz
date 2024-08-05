@@ -38,12 +38,17 @@
   "ppx-flags": [
     "rescript-embed-lang/ppx",
     [
+      "@greenlabs/ppx-spice/ppx",
+      "-uncurried"
+    ],
+    [
       "rescript-relay/ppx",
       "-uncurried"
     ]
   ],
   "bs-dependencies": [
     "resgraph",
+    "@greenlabs/ppx-spice",
     "@rescript/react",
     "rescript-relay",
     "rescript-relay-router",

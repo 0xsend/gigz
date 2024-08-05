@@ -1,3 +1,19 @@
+enum ChainId {
+  Mainnet
+  Base
+  BaseSepolia
+}
+
+enum LookupType {
+  tag
+  sendid
+}
+
+union Result = 
+  | ResultOk
+  | ResultError
+
+
 union TodoAddResult = 
   | TodoAddResultOk
   | TodoAddResultError
@@ -12,6 +28,28 @@ union TodoUpdateResult =
   | TodoUpdateResultOk
   | TodoUpdateResultError
 
+
+union VerifySessionResult = 
+  | VerifySessionResultOk
+  | VerifySessionResultError
+
+
+
+"""Request to open a sendpay session"""
+input Input {
+
+  """The identifier to request a session for"""
+  identifier: String!
+
+  """The type of identifier"""
+  lookupType: LookupType!
+
+  """The ethereum address to receive the confirmation tx"""
+  confirmationAddress: String!
+
+  """The chain id to use for the session"""
+  chainId: ChainId
+}
 
 input TodoAddInput {
   text: String!
@@ -38,6 +76,17 @@ interface Node {
 
   """The id of the object."""
   id: ID!
+}
+
+type ResultError {
+  name: String!
+  reason: String!
+}
+
+type ResultOk {
+  sessionId: String!
+  identifier: String!
+  lookupType: LookupType!
 }
 
 type TodoAddResultError {
@@ -68,6 +117,18 @@ type TodoUpdateResultOk {
   updatedTodo: Todo!
 }
 
+type VerifySessionResultError {
+  name: String!
+  reason: String!
+}
+
+type VerifySessionResultOk {
+  sendId: String!
+  address: String!
+  sendtags: [String!]
+  chainId: Int!
+}
+
 type Mutation {
 
   """Add a new Todo item."""
@@ -78,6 +139,7 @@ type Mutation {
 
   """Update a todo."""
   todoUpdate(input: TodoUpdateInput!): TodoUpdateResult!
+  makeSendpaySession(input: Input!): Result!
 }
 
 
