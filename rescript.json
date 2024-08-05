@@ -18,6 +18,14 @@
     {
       "dir": "schema",
       "subdirs": true
+    },
+    {
+      "dir": "edgedb",
+      "subdirs": true
+    },
+    {
+      "dir": "bindings",
+      "subdirs": true
     }
   ],
   "package-specs": [
@@ -28,6 +36,7 @@
   ],
   "suffix": ".mjs",
   "ppx-flags": [
+    "rescript-embed-lang/ppx",
     [
       "rescript-relay/ppx",
       "-uncurried"
@@ -39,7 +48,8 @@
     "rescript-relay",
     "rescript-relay-router",
     "@rescript/core",
-    "@glennsl/rescript-fetch"
+    "@glennsl/rescript-fetch",
+    "rescript-edgedb"
   ],
   "bsc-flags": [
     "-open RescriptCore"
