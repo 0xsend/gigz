@@ -51,6 +51,13 @@ module default {
       readonly := true;
     };
 
+    confirmation_amount -> bigint{
+      annotation description := "The minumum amount of tokens to send to the confirmation address";
+      default := 0;
+      constraint min_value(0);
+      readonly := true;
+    };
+
     chain_id -> SupportedChainId{
       default := 8453;
       readonly := true;
