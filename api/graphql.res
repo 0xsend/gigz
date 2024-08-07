@@ -3,14 +3,10 @@ open GraphQLYoga
 let edgedbClient = EdgeDB.Client.make()
 
 let viemClient = {
-  let chain = switch Vercel.env {
-  | Some(Production) => Viem.Chain.base
-  | Some(Preview) => Viem.Chain.baseSepolia
-    | Some(Development) | None => Viem.Chain.baseSepolia
-  }
   Viem.PublicClient.make({
-    chain,
-    transport: Viem.Transport.http(),
+    //@todo: probably need barg node here
+    chain: Constants.chain,
+    transport: Viem.Transport.http(Constants.transportUrl),
   })
 }
 
