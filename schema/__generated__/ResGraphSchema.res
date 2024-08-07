@@ -51,6 +51,19 @@ let applyConversionToInputObject: (
       return newObj;
     }`)
 
+let enum_Chain = GraphQLEnumType.make({
+  name: "Chain",
+  description: ?None,
+  values: {
+    "Mainnet": {GraphQLEnumType.value: "Mainnet", description: ?None, deprecationReason: ?None},
+    "Base": {GraphQLEnumType.value: "Base", description: ?None, deprecationReason: ?None},
+    "BaseSepolia": {
+      GraphQLEnumType.value: "BaseSepolia",
+      description: ?None,
+      deprecationReason: ?None,
+    },
+  }->makeEnumValues,
+})
 let enum_ChainId = GraphQLEnumType.make({
   name: "ChainId",
   description: ?None,
