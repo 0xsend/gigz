@@ -73,19 +73,6 @@ let enum_Chain = GraphQLEnumType.make({
     },
   }->makeEnumValues,
 })
-let enum_ChainId = GraphQLEnumType.make({
-  name: "ChainId",
-  description: ?None,
-  values: {
-    "Mainnet": {GraphQLEnumType.value: "Mainnet", description: ?None, deprecationReason: ?None},
-    "Base": {GraphQLEnumType.value: "Base", description: ?None, deprecationReason: ?None},
-    "BaseSepolia": {
-      GraphQLEnumType.value: "BaseSepolia",
-      description: ?None,
-      deprecationReason: ?None,
-    },
-  }->makeEnumValues,
-})
 let enum_LookupType = GraphQLEnumType.make({
   name: "LookupType",
   description: ?None,
@@ -96,10 +83,14 @@ let enum_LookupType = GraphQLEnumType.make({
 })
 let i_Node: ref<GraphQLInterfaceType.t> = Obj.magic({"contents": Js.null})
 let get_Node = () => i_Node.contents
-let t_ResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_ResultError = () => t_ResultError.contents
-let t_ResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_ResultOk = () => t_ResultOk.contents
+let t_ConsumeSessionResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_ConsumeSessionResultError = () => t_ConsumeSessionResultError.contents
+let t_ConsumeSessionResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_ConsumeSessionResultOk = () => t_ConsumeSessionResultOk.contents
+let t_MakeSessionResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionResultError = () => t_MakeSessionResultError.contents
+let t_MakeSessionResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionResultOk = () => t_MakeSessionResultOk.contents
 let t_TodoAddResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoAddResultError = () => t_TodoAddResultError.contents
 let t_TodoAddResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
@@ -112,10 +103,6 @@ let t_TodoUpdateResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": J
 let get_TodoUpdateResultError = () => t_TodoUpdateResultError.contents
 let t_TodoUpdateResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoUpdateResultOk = () => t_TodoUpdateResultOk.contents
-let t_VerifySessionResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_VerifySessionResultError = () => t_VerifySessionResultError.contents
-let t_VerifySessionResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_VerifySessionResultOk = () => t_VerifySessionResultOk.contents
 let t_Mutation: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Mutation = () => t_Mutation.contents
 let t_PageInfo: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
@@ -130,38 +117,81 @@ let t_TodoEdge: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoEdge = () => t_TodoEdge.contents
 let t_User: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_User = () => t_User.contents
-let input_Input: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
-let get_Input = () => input_Input.contents
-let input_Input_conversionInstructions = []
+let input_MakeSessionInputBySendId: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionInputBySendId = () => input_MakeSessionInputBySendId.contents
+let input_MakeSessionInputBySendId_conversionInstructions = []
+let input_MakeSessionInputByTag: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionInputByTag = () => input_MakeSessionInputByTag.contents
+let input_MakeSessionInputByTag_conversionInstructions = []
 let input_TodoAddInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoAddInput = () => input_TodoAddInput.contents
 let input_TodoAddInput_conversionInstructions = []
 let input_TodoUpdateInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoUpdateInput = () => input_TodoUpdateInput.contents
 let input_TodoUpdateInput_conversionInstructions = []
-input_Input_conversionInstructions->Array.pushMany([
-  ("chainId", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+input_MakeSessionInputBySendId_conversionInstructions->Array.pushMany([
+  ("confirmationAddress", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("confirmationAmount", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("chain", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("duration", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+])
+input_MakeSessionInputByTag_conversionInstructions->Array.pushMany([
+  ("confirmationAddress", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("confirmationAmount", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("chain", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
+  ("duration", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
 ])
 input_TodoAddInput_conversionInstructions->Array.pushMany([])
 input_TodoUpdateInput_conversionInstructions->Array.pushMany([
   ("completed", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("text", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
 ])
-let union_Result: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
-let get_Result = () => union_Result.contents
+let union_ConsumeSessionResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
+let get_ConsumeSessionResult = () => union_ConsumeSessionResult.contents
+let union_MakeSessionResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionResult = () => union_MakeSessionResult.contents
 let union_TodoAddResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
 let get_TodoAddResult = () => union_TodoAddResult.contents
 let union_TodoDeleteResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
 let get_TodoDeleteResult = () => union_TodoDeleteResult.contents
 let union_TodoUpdateResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
 let get_TodoUpdateResult = () => union_TodoUpdateResult.contents
-let union_VerifySessionResult: ref<GraphQLUnionType.t> = Obj.magic({"contents": Js.null})
-let get_VerifySessionResult = () => union_VerifySessionResult.contents
+let inputUnion_MakeSessionInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
+let get_MakeSessionInput = () => inputUnion_MakeSessionInput.contents
+let inputUnion_MakeSessionInput_conversionInstructions = []
+inputUnion_MakeSessionInput_conversionInstructions->Array.pushMany([
+  (
+    "bySendId",
+    makeInputObjectFieldConverterFn(v =>
+      switch v->Nullable.toOption {
+      | None => None
+      | Some(v) =>
+        v->applyConversionToInputObject(input_MakeSessionInputBySendId_conversionInstructions)->Some
+      }
+    ),
+  ),
+  (
+    "byTag",
+    makeInputObjectFieldConverterFn(v =>
+      switch v->Nullable.toOption {
+      | None => None
+      | Some(v) =>
+        v->applyConversionToInputObject(input_MakeSessionInputByTag_conversionInstructions)->Some
+      }
+    ),
+  ),
+])
 
-let union_Result_resolveType = (v: SendPay.MakeSession.result) =>
+let union_ConsumeSessionResult_resolveType = (v: SendPay_ConsumeSession.consumeSessionResult) =>
   switch v {
-  | Ok(_) => "ResultOk"
-  | Error(_) => "ResultError"
+  | Ok(_) => "ConsumeSessionResultOk"
+  | Error(_) => "ConsumeSessionResultError"
+  }
+
+let union_MakeSessionResult_resolveType = (v: SendPay_MakeSession.makeSessionResult) =>
+  switch v {
+  | Ok(_) => "MakeSessionResultOk"
+  | Error(_) => "MakeSessionResultError"
   }
 
 let union_TodoAddResult_resolveType = (v: TodoMutations.todoAddResult) =>
@@ -180,12 +210,6 @@ let union_TodoUpdateResult_resolveType = (v: TodoMutations.todoUpdateResult) =>
   switch v {
   | Ok(_) => "TodoUpdateResultOk"
   | Error(_) => "TodoUpdateResultError"
-  }
-
-let union_VerifySessionResult_resolveType = (v: SendPay.VerifySession.verifySessionResult) =>
-  switch v {
-  | Ok(_) => "VerifySessionResultOk"
-  | Error(_) => "VerifySessionResultError"
   }
 
 let interface_Node_resolveType = (v: Interface_node.Resolver.t) =>
@@ -208,8 +232,105 @@ i_Node.contents = GraphQLInterfaceType.make({
     }->makeFields,
   resolveType: GraphQLInterfaceType.makeResolveInterfaceTypeFn(interface_Node_resolveType),
 })
-t_ResultError.contents = GraphQLObjectType.make({
-  name: "ResultError",
+t_ConsumeSessionResultError.contents = GraphQLObjectType.make({
+  name: "ConsumeSessionResultError",
+  description: ?None,
+  interfaces: [],
+  fields: () =>
+    {
+      "name": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["name"]
+        }),
+      },
+      "reason": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["reason"]
+        }),
+      },
+    }->makeFields,
+})
+t_ConsumeSessionResultOk.contents = GraphQLObjectType.make({
+  name: "ConsumeSessionResultOk",
+  description: ?None,
+  interfaces: [],
+  fields: () =>
+    {
+      "about": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["about"]
+        }),
+      },
+      "address": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["address"]
+        }),
+      },
+      "avatar_url": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["avatar_url"]
+        }),
+      },
+      "chainId": {
+        typ: Scalars.int->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["chainId"]
+        }),
+      },
+      "refcode": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["refcode"]
+        }),
+      },
+      "sendId": {
+        typ: Scalars.float->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["sendId"]
+        }),
+      },
+      "sendtag": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["sendtag"]
+        }),
+      },
+    }->makeFields,
+})
+t_MakeSessionResultError.contents = GraphQLObjectType.make({
+  name: "MakeSessionResultError",
   description: ?None,
   interfaces: [],
   fields: () =>
@@ -234,37 +355,19 @@ t_ResultError.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
-t_ResultOk.contents = GraphQLObjectType.make({
-  name: "ResultOk",
+t_MakeSessionResultOk.contents = GraphQLObjectType.make({
+  name: "MakeSessionResultOk",
   description: ?None,
   interfaces: [],
   fields: () =>
     {
-      "identifier": {
+      "id": {
         typ: Scalars.string->Scalars.toGraphQLType->nonNull,
         description: ?None,
         deprecationReason: ?None,
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
-          src["identifier"]
-        }),
-      },
-      "lookupType": {
-        typ: enum_LookupType->GraphQLEnumType.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["lookupType"]
-        }),
-      },
-      "sessionId": {
-        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["sessionId"]
+          src["id"]
         }),
       },
     }->makeFields,
@@ -371,100 +474,12 @@ t_TodoUpdateResultOk.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
-t_VerifySessionResultError.contents = GraphQLObjectType.make({
-  name: "VerifySessionResultError",
-  description: ?None,
-  interfaces: [],
-  fields: () =>
-    {
-      "name": {
-        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["name"]
-        }),
-      },
-      "reason": {
-        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["reason"]
-        }),
-      },
-    }->makeFields,
-})
-t_VerifySessionResultOk.contents = GraphQLObjectType.make({
-  name: "VerifySessionResultOk",
-  description: ?None,
-  interfaces: [],
-  fields: () =>
-    {
-      "address": {
-        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["address"]
-        }),
-      },
-      "chainId": {
-        typ: Scalars.int->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["chainId"]
-        }),
-      },
-      "sendId": {
-        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["sendId"]
-        }),
-      },
-      "sendtags": {
-        typ: GraphQLListType.make(
-          Scalars.string->Scalars.toGraphQLType->nonNull,
-        )->GraphQLListType.toGraphQLType,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["sendtags"]
-        }),
-      },
-    }->makeFields,
-})
 t_Mutation.contents = GraphQLObjectType.make({
   name: "Mutation",
   description: ?None,
   interfaces: [],
   fields: () =>
     {
-      "makeSendpaySession": {
-        typ: get_Result()->GraphQLUnionType.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        args: {
-          "input": {typ: get_Input()->GraphQLInputObjectType.toGraphQLType->nonNull},
-        }->makeArgs,
-        resolve: makeResolveFn((src, args, ctx, info) => {
-          let src = typeUnwrapper(src)
-          SendPayMutations.makeSendpaySession(
-            src,
-            ~ctx,
-            ~input=args["input"]->applyConversionToInputObject(input_Input_conversionInstructions),
-          )
-        }),
-      },
       "todoAdd": {
         typ: get_TodoAddResult()->GraphQLUnionType.toGraphQLType->nonNull,
         description: "Add a new Todo item.",
@@ -751,29 +766,66 @@ t_User.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
-input_Input.contents = GraphQLInputObjectType.make({
-  name: "Input",
-  description: "Request to open a sendpay session",
+input_MakeSessionInputBySendId.contents = GraphQLInputObjectType.make({
+  name: "MakeSessionInputBySendId",
+  description: ?None,
   fields: () =>
     {
-      "chainId": {
-        GraphQLInputObjectType.typ: enum_ChainId->GraphQLEnumType.toGraphQLType,
+      "chain": {
+        GraphQLInputObjectType.typ: enum_Chain->GraphQLEnumType.toGraphQLType,
         description: "The chain id to use for the session",
         deprecationReason: ?None,
       },
       "confirmationAddress": {
-        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
         description: "The ethereum address to receive the confirmation tx",
         deprecationReason: ?None,
       },
-      "identifier": {
-        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
-        description: "The identifier to request a session for",
+      "confirmationAmount": {
+        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType,
+        description: "The amount of tokens to send to the confirmation address",
         deprecationReason: ?None,
       },
-      "lookupType": {
-        GraphQLInputObjectType.typ: enum_LookupType->GraphQLEnumType.toGraphQLType->nonNull,
-        description: "The type of identifier",
+      "duration": {
+        GraphQLInputObjectType.typ: Scalars.float->Scalars.toGraphQLType,
+        description: "Duration of the session in milliseconds",
+        deprecationReason: ?None,
+      },
+      "sendid": {
+        GraphQLInputObjectType.typ: Scalars.float->Scalars.toGraphQLType->nonNull,
+        description: "The sendid to request a session for",
+        deprecationReason: ?None,
+      },
+    }->makeFields,
+})
+input_MakeSessionInputByTag.contents = GraphQLInputObjectType.make({
+  name: "MakeSessionInputByTag",
+  description: ?None,
+  fields: () =>
+    {
+      "chain": {
+        GraphQLInputObjectType.typ: enum_Chain->GraphQLEnumType.toGraphQLType,
+        description: "The chain id to use for the session",
+        deprecationReason: ?None,
+      },
+      "confirmationAddress": {
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
+        description: "The ethereum address to receive the confirmation tx",
+        deprecationReason: ?None,
+      },
+      "confirmationAmount": {
+        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType,
+        description: "The amount of tokens to send to the confirmation address",
+        deprecationReason: ?None,
+      },
+      "duration": {
+        GraphQLInputObjectType.typ: Scalars.float->Scalars.toGraphQLType,
+        description: "Duration of the session in milliseconds",
+        deprecationReason: ?None,
+      },
+      "tag": {
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: "The sendtag to request a session for",
         deprecationReason: ?None,
       },
     }->makeFields,
@@ -817,11 +869,35 @@ input_TodoUpdateInput.contents = GraphQLInputObjectType.make({
       },
     }->makeFields,
 })
-union_Result.contents = GraphQLUnionType.make({
-  name: "Result",
+inputUnion_MakeSessionInput.contents = GraphQLInputObjectType.make({
+  name: "MakeSessionInput",
   description: ?None,
-  types: () => [get_ResultError(), get_ResultOk()],
-  resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_Result_resolveType),
+  fields: () =>
+    {
+      "bySendId": {
+        GraphQLInputObjectType.typ: get_MakeSessionInputBySendId()->GraphQLInputObjectType.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+      },
+      "byTag": {
+        GraphQLInputObjectType.typ: get_MakeSessionInputByTag()->GraphQLInputObjectType.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+      },
+    }->makeFields,
+  extensions: {oneOf: true},
+})
+union_ConsumeSessionResult.contents = GraphQLUnionType.make({
+  name: "ConsumeSessionResult",
+  description: ?None,
+  types: () => [get_ConsumeSessionResultError(), get_ConsumeSessionResultOk()],
+  resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_ConsumeSessionResult_resolveType),
+})
+union_MakeSessionResult.contents = GraphQLUnionType.make({
+  name: "MakeSessionResult",
+  description: ?None,
+  types: () => [get_MakeSessionResultError(), get_MakeSessionResultOk()],
+  resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_MakeSessionResult_resolveType),
 })
 union_TodoAddResult.contents = GraphQLUnionType.make({
   name: "TodoAddResult",
@@ -840,12 +916,6 @@ union_TodoUpdateResult.contents = GraphQLUnionType.make({
   description: ?None,
   types: () => [get_TodoUpdateResultError(), get_TodoUpdateResultOk()],
   resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_TodoUpdateResult_resolveType),
-})
-union_VerifySessionResult.contents = GraphQLUnionType.make({
-  name: "VerifySessionResult",
-  description: ?None,
-  types: () => [get_VerifySessionResultError(), get_VerifySessionResultOk()],
-  resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_VerifySessionResult_resolveType),
 })
 
 let schema = GraphQLSchemaType.make({"query": get_Query(), "mutation": get_Mutation()})
