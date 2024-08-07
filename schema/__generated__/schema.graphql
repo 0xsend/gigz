@@ -8,20 +8,19 @@ enum Chain {
   BaseSepolia
 }
 
-enum ChainId {
-  Mainnet
-  Base
-  BaseSepolia
-}
-
 enum LookupType {
   tag
   sendid
 }
 
-union Result = 
-  | ResultOk
-  | ResultError
+union ConsumeSessionResult = 
+  | ConsumeSessionResultOk
+  | ConsumeSessionResultError
+
+
+union MakeSessionResult = 
+  | MakeSessionResultOk
+  | MakeSessionResultError
 
 
 union TodoAddResult = 
@@ -39,26 +38,40 @@ union TodoUpdateResult =
   | TodoUpdateResultError
 
 
-union VerifySessionResult = 
-  | VerifySessionResultOk
-  | VerifySessionResultError
+input MakeSessionInputBySendId {
 
-
-
-"""Request to open a sendpay session"""
-input Input {
-
-  """The identifier to request a session for"""
-  identifier: String!
-
-  """The type of identifier"""
-  lookupType: LookupType!
+  """The sendid to request a session for"""
+  sendid: Float!
 
   """The ethereum address to receive the confirmation tx"""
-  confirmationAddress: String!
+  confirmationAddress: String
+
+  """The amount of tokens to send to the confirmation address"""
+  confirmationAmount: BigInt
 
   """The chain id to use for the session"""
-  chainId: ChainId
+  chain: Chain
+
+  """Duration of the session in milliseconds"""
+  duration: Float
+}
+
+input MakeSessionInputByTag {
+
+  """The sendtag to request a session for"""
+  tag: String!
+
+  """The ethereum address to receive the confirmation tx"""
+  confirmationAddress: String
+
+  """The amount of tokens to send to the confirmation address"""
+  confirmationAmount: BigInt
+
+  """The chain id to use for the session"""
+  chain: Chain
+
+  """Duration of the session in milliseconds"""
+  duration: Float
 }
 
 input TodoAddInput {
@@ -80,6 +93,11 @@ input TodoUpdateInput {
   text: String
 }
 
+input MakeSessionInput @oneOf {
+  bySendId: MakeSessionInputBySendId
+  byTag: MakeSessionInputByTag
+}
+
 
 """An object with an ID."""
 interface Node {
@@ -88,15 +106,28 @@ interface Node {
   id: ID!
 }
 
-type ResultError {
+type ConsumeSessionResultError {
+  name: String!
+  reason: String
+}
+
+type ConsumeSessionResultOk {
+  sendId: Float!
+  address: String!
+  sendtag: String
+  avatar_url: String
+  about: String
+  refcode: String
+  chainId: Int
+}
+
+type MakeSessionResultError {
   name: String!
   reason: String!
 }
 
-type ResultOk {
-  sessionId: String!
-  identifier: String!
-  lookupType: LookupType!
+type MakeSessionResultOk {
+  id: String!
 }
 
 type TodoAddResultError {
@@ -127,18 +158,6 @@ type TodoUpdateResultOk {
   updatedTodo: Todo!
 }
 
-type VerifySessionResultError {
-  name: String!
-  reason: String!
-}
-
-type VerifySessionResultOk {
-  sendId: String!
-  address: String!
-  sendtags: [String!]
-  chainId: Int!
-}
-
 type Mutation {
 
   """Add a new Todo item."""
@@ -149,7 +168,6 @@ type Mutation {
 
   """Update a todo."""
   todoUpdate(input: TodoUpdateInput!): TodoUpdateResult!
-  makeSendpaySession(input: Input!): Result!
 }
 
 
