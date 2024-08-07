@@ -10,33 +10,6 @@ let currentTime = (_: query) => {
   Some(Date.now())
 }
 
-// import { ObjectType, Field, ID } from '@nestjs/graphql';
-// //               v Don't forget to prefix type with "GraphQL"
-// import { GraphQLBigInt, GraphQLDate } from 'graphql-scalars';
-
-// @ObjectType()
-// export class GuyEntity {
-//   @Field(() => String, {
-//     description: 'The guy name.',
-//     nullable: false,
-//   })
-//   name: string;
-
-//   //                 v GraphQL scalar type
-//   @Field(() => GraphQLBigInt, {
-//     description: 'Social security number, must be unique.',
-//     nullable: false,
-//   })
-//   //                      v js/ts type
-//   socialSecurityNumber: number;
-
-//   @Field(() => GraphQLDate, {
-//     description: 'Date of creation',
-//     nullable: false,
-//   })
-//   createdAt: Date;
-// }
-
 module BigInt: {
   /** A bigint. */
   @gql.scalar

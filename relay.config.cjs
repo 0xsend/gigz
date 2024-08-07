@@ -4,5 +4,6 @@ module.exports = {
   artifactDirectory: "./src/__generated__",
   customScalarTypes: {
     Timestamp: "Timestamp.t",
+    BigInt: "Schema.BigInt",
   },
 };
