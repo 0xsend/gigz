@@ -1,4 +1,8 @@
 module default {
+  global base_sendpay_address: str{
+    annotation description := "An ethereum address that will receive the confirmation tx";
+    default := "0x7CE90eF0f63c786C627576cFFa6d942fB55Ae385";
+  }
   scalar type SupportedChainId extending int32 {
     constraint one_of (1, 8453, 84532);
   };
@@ -40,6 +44,7 @@ module default {
     };
 
     required confirmation_address -> str{
+      default := global base_sendpay_address;
       annotation description := "An ethereum address that will receive the confirmation tx";
       constraint min_len_value(42);
       constraint max_len_value(42);
