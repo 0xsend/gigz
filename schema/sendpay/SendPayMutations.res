@@ -46,7 +46,9 @@ let makeSendpaySession = async (
       about: about->Nullable.mapOr(Null.null, Null.make),
       refcode: Null.make(refcode),
       address,
-      confirmationAddress: confirmationAddress->Null.fromOption,
+      confirmationAddress: confirmationAddress
+      ->Option.getOr("0xe3eed8fCfBf3C5dE658339Cb2fb4829C4118893c") //@todo: default is base sepolia for now. Should default to base in prod
+      ->Null.Value,
       confirmationAmount: confirmationAmount->Option.mapOr(Null.make(0n), Null.make),
       chainId: chain->Option.map(Chain.toId)->Null.fromOption,
       //@todo: passing null causes the db entry to be null, so we set default to 5 minutes here.
