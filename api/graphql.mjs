@@ -2,36 +2,17 @@
 
 import * as Viem from "viem";
 import * as Edgedb from "edgedb";
+import * as Constants from "../src/Constants.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DataLoaders from "../schema/DataLoaders.mjs";
-import * as Chains from "viem/chains";
 import * as GraphqlYoga from "graphql-yoga";
 import * as ResGraphSchema from "../schema/__generated__/ResGraphSchema.mjs";
 
 var edgedbClient = Edgedb.createClient();
 
-var match = process.env.VERCEL_ENV;
-
-var chain;
-
-if (match !== undefined) {
-  switch (match) {
-    case "production" :
-        chain = Chains.base;
-        break;
-    case "development" :
-    case "preview" :
-        chain = Chains.baseSepolia;
-        break;
-    
-  }
-} else {
-  chain = Chains.baseSepolia;
-}
-
 var viemClient = Viem.createPublicClient({
-      chain: chain,
-      transport: Viem.http()
+      chain: Constants.chain,
+      transport: Viem.http(Constants.transportUrl)
     });
 
 var $$default = GraphqlYoga.createYoga({
