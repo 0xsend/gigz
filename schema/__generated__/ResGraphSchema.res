@@ -51,6 +51,15 @@ let applyConversionToInputObject: (
       return newObj;
     }`)
 
+let scalar_BigInt = GraphQLScalar.make({
+  let config: GraphQLScalar.config<Schema.BigInt.t> = {
+    name: "BigInt",
+    description: "A bigint.",
+    parseValue: Schema.BigInt.parseValue,
+    serialize: Schema.BigInt.serialize,
+  }
+  config
+})
 let enum_Chain = GraphQLEnumType.make({
   name: "Chain",
   description: ?None,
