@@ -1,4 +1,4 @@
-// @sourceHash cd642b3aacab223cabf800eef9c560d9
+// @sourceHash e5b51c4ae9881d4842c992a3824a62a8
 
 module ConsumeSession = {
   let queryText = `# @name consumeSession
@@ -12,16 +12,16 @@ module ConsumeSession = {
   }
   
   type response = {
-    refcode: Null.t<string>,
     confirmation_amount: Null.t<bigint>,
-    avatar_url: Null.t<string>,
-    about: Null.t<string>,
     sendtag: Null.t<string>,
     sendid: float,
+    refcode: Null.t<string>,
     created_at: Date.t,
     confirmation_address: string,
     chain_id: Null.t<int>,
+    avatar_url: Null.t<string>,
     address: string,
+    about: Null.t<string>,
     key: string,
     expires_at: Date.t,
     id: string,
