@@ -1,3 +1,9 @@
+enum Chain {
+  Mainnet
+  Base
+  BaseSepolia
+}
+
 enum ChainId {
   Mainnet
   Base
