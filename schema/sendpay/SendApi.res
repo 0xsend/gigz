@@ -15,8 +15,19 @@ let sendApiVersion = sendApiVersion->Option.getOr("v1")
 
 let sendProfileLookupUrl = `${sendApiUrl}/rest/${sendApiVersion}/rpc/profile_lookup`
 
-let sendAnonApiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncXRvdWxleGh2YWhldnN5c3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMwOTE5MzUsImV4cCI6MjAwODY2NzkzNX0.RL8W-jw2rsDhimYl8KklF2B9bNTPQ-Kj5zZA0XlufUA"
-let sendAnonAuthKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJzdWIiOiJlNzcwNjA1OS0wMTE3LTQyZmEtOGZjYi1hMGJhYmQxMjRlNzIiLCJpc19hbm9ueW1vdXMiOmZhbHNlLCJpYXQiOjE3MjI0MDgyMDEsImV4cCI6MTcyMzAxMzAwMX0.I6WzY_0QOcUkqnSA2XUwzIDHxpErv1Ooq6G9xmyB5sQ"
+let sendAnonApiKey = switch Vercel.env {
+| Some(Production) => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncXRvdWxleGh2YWhldnN5c3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMwOTE5MzUsImV4cCI6MjAwODY2NzkzNX0.RL8W-jw2rsDhimYl8KklF2B9bNTPQ-Kj5zZA0XlufUA"
+| Some(Preview)
+| Some(Development)
+| None => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVncXRvdWxleGh2YWhldnN5c3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMwOTE5MzUsImV4cCI6MjAwODY2NzkzNX0.RL8W-jw2rsDhimYl8KklF2B9bNTPQ-Kj5zZA0XlufUA"
+}
+
+let sendAnonAuthKey = switch Vercel.env {
+| Some(Production) => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJzdWIiOiJlNzcwNjA1OS0wMTE3LTQyZmEtOGZjYi1hMGJhYmQxMjRlNzIiLCJpc19hbm9ueW1vdXMiOmZhbHNlLCJpYXQiOjE3MjI0MDgyMDEsImV4cCI6MTcyMzAxMzAwMX0.I6WzY_0QOcUkqnSA2XUwzIDHxpErv1Ooq6G9xmyB5sQ"
+| Some(Preview)
+| Some(Development)
+| None => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJzdWIiOiJlNzcwNjA1OS0wMTE3LTQyZmEtOGZjYi1hMGJhYmQxMjRlNzIiLCJpc19hbm9ueW1vdXMiOmZhbHNlLCJpYXQiOjE3MjI5NDI3NjEsImV4cCI6MTcyMzU0NzU2MX0.Eq9MADslgY1WanZ-VGYRb390Dq2WQALUCLPVf_Vw8yM"
+}
 
 module SpiceHelpers = {
   let nullableToJson = (encoder, value: Nullable.t<'a>): JSON.t => {
@@ -49,14 +60,15 @@ module Profile = {
     address: @spice.codec(SpiceHelpers.nullable) Nullable.t<string>,
     chain_id: @spice.codec(SpiceHelpers.nullable) Nullable.t<int>,
     is_public: bool,
-    sendid: int,
+    sendid: float,
     all_tags: @spice.codec(SpiceHelpers.nullable) Nullable.t<array<string>>,
   }
   @spice
   type data = array<t>
 }
 
-let profileLookup = async (identifier, lookupType) => {
+type identifier = SendId(float) | Tag(string)
+let profileLookup = async identifier => {
   open Fetch
   switch await fetch(
     sendProfileLookupUrl,
@@ -67,9 +79,13 @@ let profileLookup = async (identifier, lookupType) => {
         ("Content-Type", "application/json"),
         ("Authorization", `Bearer ${sendAnonAuthKey}`),
       ]),
-      body: Body.string(
-        {"lookup_type": lookupType, "identifier": identifier}->JSON.stringifyAny->Option.getOr(""),
-      ),
+      body: switch identifier {
+      | SendId(sendid) => {"lookup_type": "sendid", "identifier": sendid->Float.toString}
+      | Tag(tag) => {"lookup_type": "tag", "identifier": tag}
+      }
+      ->JSON.stringifyAny
+      ->Option.getOr("")
+      ->Body.string,
       credentials: #"same-origin",
     },
   ) {
@@ -87,8 +103,8 @@ let profileLookup = async (identifier, lookupType) => {
   | res =>
     Console.error2(`Status: ${res->Response.status->Int.toString}`, res->Response.statusText)
     switch res->Response.status {
-    | 401 => Error("Unauthorized")
-    | _ => Error("Unhandled error")
+    | 400 | 401 => Error(Response.statusText(res))
+    | _ => Error("Unhandled error. Check Console for more info")
     }
   }
 }

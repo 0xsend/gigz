@@ -480,6 +480,33 @@ t_Mutation.contents = GraphQLObjectType.make({
   interfaces: [],
   fields: () =>
     {
+      "consumeSendpaySession": {
+        typ: get_ConsumeSessionResult()->GraphQLUnionType.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          SendPayMutations.consumeSendpaySession(src, ~ctx)
+        }),
+      },
+      "makeSendpaySession": {
+        typ: get_MakeSessionResult()->GraphQLUnionType.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        args: {
+          "input": {typ: get_MakeSessionInput()->GraphQLInputObjectType.toGraphQLType->nonNull},
+        }->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          SendPayMutations.makeSendpaySession(
+            src,
+            ~ctx,
+            ~input=args["input"]
+            ->applyConversionToInputObject(inputUnion_MakeSessionInput_conversionInstructions)
+            ->inputUnionUnwrapper(["BySendId", "ByTag"]),
+          )
+        }),
+      },
       "todoAdd": {
         typ: get_TodoAddResult()->GraphQLUnionType.toGraphQLType->nonNull,
         description: "Add a new Todo item.",

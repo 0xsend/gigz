@@ -168,6 +168,8 @@ type Mutation {
 
   """Update a todo."""
   todoUpdate(input: TodoUpdateInput!): TodoUpdateResult!
+  consumeSendpaySession: ConsumeSessionResult!
+  makeSendpaySession(input: MakeSessionInput!): MakeSessionResult!
 }
 
 

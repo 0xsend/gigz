@@ -21,7 +21,7 @@
     "dev:relay": "rescript-relay-compiler --watch",
     "dev:rescript": "rescript build -w",
     "schema": "npx -y get-graphql-schema http://localhost:3000/api/graphql > schema.graphql",
-    "setup": "npm run build:edgedb && npm run build:resgraph && npm run build:relay && npm run router:generate && npm run build:rescript",
+    "setup": "npm run build:resgraph && npm run build:relay && npm run router:generate && npm run build:rescript && npm run build:edgedb",
     "postinstall": "npm run setup"
   },
   "devDependencies": {
