@@ -5,7 +5,36 @@ function currentTime(param) {
   return Date.now();
 }
 
+function parseValue(v) {
+  if (!Array.isArray(v) && (v === null || typeof v !== "object") && typeof v !== "number" && typeof v !== "string") {
+    return ;
+  }
+  switch (typeof v) {
+    case "string" :
+        try {
+          return BigInt(v);
+        }
+        catch (exn){
+          return ;
+        }
+    case "number" :
+        return BigInt(v);
+    default:
+      return ;
+  }
+}
+
+function serialize(x) {
+  return x.toString();
+}
+
+var $$BigInt$1 = {
+  parseValue: parseValue,
+  serialize: serialize
+};
+
 export {
   currentTime ,
+  $$BigInt$1 as $$BigInt,
 }
 /* No side effect */
