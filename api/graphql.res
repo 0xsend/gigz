@@ -16,8 +16,7 @@ let default = createYoga({
   context: async ({request}) => {
     open ResGraphContext
     {
-      currentUserId: request->Request.headers->Headers.get("x-user-id"),
-      sendpayKey: "sXGTOzTB4_t9pfuq8tAKCj30X3ZlCVmt6lCQStqrgEo",
+      sendpayKey: request->Request.headers->Headers.get("x-sendpay-key")->Option.getOr(""),
       dataLoaders: DataLoaders.make(),
       edgedbClient,
       viemClient,
