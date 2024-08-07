@@ -5,6 +5,7 @@ import * as Edgedb from "edgedb";
 import * as Constants from "../src/Constants.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DataLoaders from "../schema/DataLoaders.mjs";
+import * as Core__Option from "@rescript/core/src/Core__Option.mjs";
 import * as GraphqlYoga from "graphql-yoga";
 import * as ResGraphSchema from "../schema/__generated__/ResGraphSchema.mjs";
 
@@ -19,8 +20,7 @@ var $$default = GraphqlYoga.createYoga({
       schema: ResGraphSchema.schema,
       context: (async function (param) {
           return {
-                  currentUserId: Caml_option.nullable_to_opt(param.request.headers.get("x-user-id")),
-                  sendpayKey: "sXGTOzTB4_t9pfuq8tAKCj30X3ZlCVmt6lCQStqrgEo",
+                  sendpayKey: Core__Option.getOr(Caml_option.nullable_to_opt(param.request.headers.get("x-sendpay-key")), ""),
                   dataLoaders: DataLoaders.make(),
                   edgedbClient: edgedbClient,
                   viemClient: viemClient

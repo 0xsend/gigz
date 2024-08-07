@@ -23,7 +23,10 @@ let fetchQuery: RescriptRelay.Network.fetchFunctionPromise = async (
     url,
     {
       method: #POST,
-      headers: Headers.fromArray([("content-type", "application/json"), ("x-user-id", "1")]),
+      headers: Headers.fromArray([
+        ("content-type", "application/json"),
+        ("x-sendpay-key", "sXGTOzTB4_t9pfuq8tAKCj30X3ZlCVmt6lCQStqrgEo"),
+      ]),
       body: Body.string(
         {"query": operation.text, "variables": variables}
         ->JSON.stringifyAny

@@ -9,34 +9,85 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
-enum ChainId {
+"""A bigint."""
+scalar BigInt
+
+enum Chain {
   Mainnet
   Base
   BaseSepolia
 }
 
-"""Request to open a sendpay session"""
-input Input {
-  """The chain id to use for the session"""
-  chainId: ChainId
+union ConsumeSessionResult = ConsumeSessionResultError | ConsumeSessionResultOk
 
-  """The ethereum address to receive the confirmation tx"""
-  confirmationAddress: String!
-
-  """The identifier to request a session for"""
-  identifier: String!
-
-  """The type of identifier"""
-  lookupType: LookupType!
+type ConsumeSessionResultError {
+  name: String!
+  reason: String
 }
 
-enum LookupType {
-  tag
-  sendid
+type ConsumeSessionResultOk {
+  about: String
+  address: String!
+  avatar_url: String
+  chainId: Int
+  refcode: String
+  sendId: Float!
+  sendtag: String
+}
+
+input MakeSessionInput {
+  bySendId: MakeSessionInputBySendId
+  byTag: MakeSessionInputByTag
+}
+
+input MakeSessionInputBySendId {
+  """The chain id to use for the session"""
+  chain: Chain
+
+  """The ethereum address to receive the confirmation tx"""
+  confirmationAddress: String
+
+  """The amount of tokens to send to the confirmation address"""
+  confirmationAmount: BigInt
+
+  """Duration of the session in milliseconds"""
+  duration: Float
+
+  """The sendid to request a session for"""
+  sendid: Float!
+}
+
+input MakeSessionInputByTag {
+  """The chain id to use for the session"""
+  chain: Chain
+
+  """The ethereum address to receive the confirmation tx"""
+  confirmationAddress: String
+
+  """The amount of tokens to send to the confirmation address"""
+  confirmationAmount: BigInt
+
+  """Duration of the session in milliseconds"""
+  duration: Float
+
+  """The sendtag to request a session for"""
+  tag: String!
+}
+
+union MakeSessionResult = MakeSessionResultError | MakeSessionResultOk
+
+type MakeSessionResultError {
+  name: String!
+  reason: String!
+}
+
+type MakeSessionResultOk {
+  id: String!
 }
 
 type Mutation {
-  makeSendpaySession(input: Input!): Result!
+  consumeSendpaySession: ConsumeSessionResult!
+  makeSendpaySession(input: MakeSessionInput!): MakeSessionResult!
 
   """Add a new Todo item."""
   todoAdd(input: TodoAddInput!): TodoAddResult!
@@ -50,8 +101,7 @@ type Mutation {
 
 """An object with an ID."""
 interface Node {
-  """The id of the object."""
-  id: ID!
+  id: String!
 }
 
 """Information about pagination in a connection."""
@@ -86,26 +136,11 @@ type Query {
   nodes(ids: [ID!]!): [Node]!
 }
 
-union Result = ResultError | ResultOk
-
-type ResultError {
-  name: String!
-  reason: String!
-}
-
-type ResultOk {
-  identifier: String!
-  lookupType: LookupType!
-  sessionId: String!
-}
-
 """A single todo item."""
 type Todo implements Node {
   """Whether the todo is completed or not."""
   completed: Boolean!
-
-  """The id of the object."""
-  id: ID!
+  id: String!
 
   """The text of the todo item."""
   text: String!
@@ -179,8 +214,7 @@ type TodoUpdateResultOk {
 }
 
 type User implements Node {
-  """The id of the object."""
-  id: ID!
+  id: String!
   name: String!
 }
 
