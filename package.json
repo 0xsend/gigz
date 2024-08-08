@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:relay && npm run router:generate && npm run build:rescript && npm run build:vite",
-    "build:edgedb": "rescript-edgedb generate --output ./edgedb/__generated__ --src ./schema/sendpay",
+    "build:edgedb": "rescript-edgedb generate --output ./edgedb/__generated__ --src ./schema",
     "build:resgraph": "resgraph build",
     "build:relay": "rescript-relay-compiler",
     "build:rescript": "rescript build -with-deps",
@@ -21,7 +21,7 @@
     "dev:relay": "rescript-relay-compiler --watch",
     "dev:rescript": "rescript build -w",
     "schema": "npx -y get-graphql-schema http://localhost:3000/api/graphql > schema.graphql",
-    "setup": "npm run build:resgraph && npm run build:relay && npm run router:generate && npm run build:rescript && npm run build:edgedb",
+    "setup": "npm run build:relay && npm run router:generate && npm run build:rescript && npm run build:edgedb && npm run build:resgraph",
     "postinstall": "npm run setup"
   },
   "devDependencies": {
