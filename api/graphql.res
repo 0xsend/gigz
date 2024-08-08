@@ -4,7 +4,6 @@ let edgedbClient = EdgeDB.Client.make()
 
 let viemClient = {
   Viem.PublicClient.make({
-    //@todo: probably need barg node here
     chain: Constants.chain,
     transport: Viem.Transport.http(Constants.transportUrl),
   })
