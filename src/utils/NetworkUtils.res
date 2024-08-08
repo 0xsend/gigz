@@ -19,13 +19,14 @@ let fetchQuery: RescriptRelay.Network.fetchFunctionPromise = async (
 ) => {
   open Fetch
 
+  let sendpayKey = Dom.Storage2.localStorage->Dom.Storage2.getItem("sendpay_sendpayKey")
   let res = await fetch(
     url,
     {
       method: #POST,
       headers: Headers.fromArray([
         ("content-type", "application/json"),
-        ("x-sendpay-key", "sXGTOzTB4_t9pfuq8tAKCj30X3ZlCVmt6lCQStqrgEo"),
+        ("x-sendpay-key", sendpayKey->Option.getOr("")),
       ]),
       body: Body.string(
         {"query": operation.text, "variables": variables}
