@@ -114,12 +114,13 @@ let consumeSendpaySession = async (
           "to": confirmationAddress,
         },
         fromBlock: blockNumber //@todo: can we get block from created_at field
-        ->BigInt.sub(3600n) //@2 hours of blocks on base
+        ->BigInt.sub(3600n) // @2 hours of blocks on base
         ->Block,
         toBlock: Block(blockNumber),
       },
     )
-    switch (eventLogs->Array.get(0), confirmationAmount->Null.toOption) {
+
+    switch (eventLogs->Array.get(Array.length(eventLogs) - 1), confirmationAmount->Null.toOption) {
     // Only need the latest event
     | (None, _) => Error({name: "No Sendpay Event Found"})
     | (Some({args}), Some(confirmationAmount)) if args["value"] < confirmationAmount =>
