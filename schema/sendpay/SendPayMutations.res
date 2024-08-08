@@ -119,7 +119,8 @@ let consumeSendpaySession = async (
         toBlock: Block(blockNumber),
       },
     )
-    switch (eventLogs->Array.get(0), confirmationAmount->Null.toOption) {
+
+    switch (eventLogs->Array.get(Array.length(eventLogs) - 1), confirmationAmount->Null.toOption) {
     // Only need the latest event
     | (None, _) => Error({name: "No Sendpay Event Found"})
     | (Some({args}), Some(confirmationAmount)) if args["value"] < confirmationAmount =>
