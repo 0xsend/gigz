@@ -1,32 +1,22 @@
-module Query = %relay(`
-  query LayoutQuery {
-    ...LayoutDisplay_query
-  }
-`)
-
-let links = [("Show Gigs", Routes.Root.Todos.Route.makeLink())]
-
 @react.component
-let make = (~queryRef, ~children) => {
-  let data = Query.usePreloaded(~queryRef)
-
-  <div className="p-6">
-    <div className="f-1 w-full justify-center items-center">
-      <div className="w-full max-w-80 mx-auto">
-        <Logo />
+let make = () => {
+  <div className="p-6 h-full">
+    <header className="w-full justify-center items-center">
+      <div className="flex justify-center space-x-5 items-center">
+        <h1 className="text-color12 text-uppercase text-3xl font-semibold">
+          {React.string("Sendpay Example App")}
+        </h1>
+        <div className="h-14 border border-color11 rounded-md p-2 flex items-center space-x-3">
+          <div className="w-10 rounded-lg">
+            <IconLogo />
+          </div>
+          <p className="text-color12 font-semibold font-mono text-xl"> {React.string("v0.0.0")} </p>
+        </div>
       </div>
-    </div>
-    <div className="flex flex-row py-2 ">
-      {links
-      ->Array.map(((label, link)) =>
-        <RelayRouter.Link className="p-4 rounded-md bg-[#40FB50] text-black" key=label to_=link>
-          {React.string(label)}
-        </RelayRouter.Link>
-      )
-      ->React.array}
-    </div>
+    </header>
+    <div className="flex flex-row py-2 " />
     <React.Suspense fallback={<div> {React.string("Loading...")} </div>}>
-      <LayoutDisplay query={data.fragmentRefs}> {children} </LayoutDisplay>
+      <LayoutDisplay />
     </React.Suspense>
   </div>
 }

@@ -229,6 +229,11 @@ i_Node.contents = GraphQLInterfaceType.make({
         description: "The id of the object.",
         deprecationReason: ?None,
       },
+      "id": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+      },
     }->makeFields,
   resolveType: GraphQLInterfaceType.makeResolveInterfaceTypeFn(interface_Node_resolveType),
 })
@@ -694,12 +699,12 @@ t_Todo.contents = GraphQLObjectType.make({
         }),
       },
       "id": {
-        typ: Scalars.id->Scalars.toGraphQLType->nonNull,
-        description: "The id of the object.",
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
         deprecationReason: ?None,
-        resolve: makeResolveFn((src, args, ctx, info) => {
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
-          NodeInterfaceResolver.id(src, ~typename=Todo)
+          src["id"]
         }),
       },
       "text": {
@@ -774,12 +779,12 @@ t_User.contents = GraphQLObjectType.make({
   fields: () =>
     {
       "id": {
-        typ: Scalars.id->Scalars.toGraphQLType->nonNull,
-        description: "The id of the object.",
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
         deprecationReason: ?None,
-        resolve: makeResolveFn((src, args, ctx, info) => {
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
-          NodeInterfaceResolver.id(src, ~typename=User)
+          src["id"]
         }),
       },
       "name": {

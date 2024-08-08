@@ -104,6 +104,7 @@ interface Node {
 
   """The id of the object."""
   id: ID!
+  id: String!
 }
 
 type ConsumeSessionResultError {
@@ -210,15 +211,13 @@ type Query {
 
 """A single todo item."""
 type Todo implements Node {
+  id: String!
 
   """The text of the todo item."""
   text: String!
 
   """Whether the todo is completed or not."""
   completed: Boolean!
-
-  """The id of the object."""
-  id: ID!
 }
 
 
@@ -244,9 +243,7 @@ type TodoEdge {
 }
 
 type User implements Node {
+  id: String!
   name: String!
-
-  """The id of the object."""
-  id: ID!
 }
 

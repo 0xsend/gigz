@@ -1,5 +1,10 @@
 type publicClient
 
+@module("viem") external formatUnits: (bigint, int) => string = "formatUnits"
+@module("viem") external parseUnits: (string, int) => option<bigint> = "parseUnits"
+@module("viem") external formatEther: bigint => string = "formatEther"
+@module("viem") external parseEther: string => option<bigint> = "parseEther"
+
 module Chain = {
   type t
   @module("viem/chains") @val external mainnet: t = "mainnet"
@@ -95,3 +100,4 @@ module PublicClient = {
   }
   @module("viem") external make: config => t = "createPublicClient"
 }
+

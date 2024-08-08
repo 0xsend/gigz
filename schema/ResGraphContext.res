@@ -1,5 +1,5 @@
 type context = {
-  currentUserId: option<string>,
+  currentUserId?: string,
   sendpayKey: string,
   dataLoaders: DataLoaders.t,
   edgedbClient: EdgeDB.Client.t,

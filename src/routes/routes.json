@@ -1,11 +1,13 @@
 [
   {
-    "path": "/",
+    "path": "?sendpayId=string",
     "name": "Root",
     "children": [
       {
-        "include": "todoRoutes.json"
-      }
+        "path": ":tag",
+        "name": "Sendtag",
+        "children": []
+      },
     ]
   }
 ]
