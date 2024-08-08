@@ -1,3 +1,7 @@
+module DeviceDetect = {
+  @module("react-device-detect") @val external isMobile: bool = "isMobile"
+}
+
 module Window = {
   type t = Dom.window
   type windowFeatures = | @as("popup,height=800px,width=800px") Popup
@@ -76,7 +80,6 @@ let usdcAddress = chain => {
 }
 
 type identifier = SendId(option<float>) | Tag(option<string>)
-type sendpayState = SignIn | Proceed | Login
 type user = {
   sendId: float,
   address: string,
@@ -90,14 +93,15 @@ let make = () => {
   let (identifier, setIdentifier) = React.useState(_ => Tag(None))
   let (makeSession, isMakingSession) = MakeSendpaySessionMutation.use()
   let (consumeSession, isConsumingSession) = ConsumeSessionMutation.use()
-  let (sendpayState, setSendpayState) = React.useState(_ => SignIn)
   let (error, setError) = React.useState(_ => None)
   let (user, setUser) = React.useState(_ => None)
-  let makeSendpaySession = () => {
-    switch identifier {
-    | SendId(Some(sendid)) =>
-      makeSession(
-        ~variables={
+  let {queryParams, setParams} = Routes.Root.Route.useQueryParams()
+
+  let makeSendpaySession = identifier => {
+    open LayoutDisplayMakeSendpaySessionMutation_graphql.Types
+    let (variables, idType) = switch identifier {
+    | SendId(Some(sendid)) => (
+        {
           input: {
             bySendId: {
               sendid,
@@ -110,22 +114,10 @@ let make = () => {
             },
           },
         },
-        ~onCompleted={
-          (_, _) => {
-            window->Window.open_(
-              ~url=`${sendAppUrl}/send/confirm?idType=tag&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
-                  chain,
-                )}`,
-              ~target="OpenSendWindow",
-              ~features=Popup,
-            )
-            setSendpayState(_ => Login)
-          }
-        },
-      )->RescriptRelay.Disposable.ignore
-    | Tag(Some(tag)) =>
-      makeSession(
-        ~variables={
+        "sendid",
+      )
+    | Tag(Some(tag)) => (
+        {
           input: {
             byTag: {
               tag,
@@ -138,30 +130,44 @@ let make = () => {
             },
           },
         },
-        ~onCompleted={
-          (_, _) => {
+        "tag",
+      )
+    | _ => panic("Invalid identifier")
+    }
+    makeSession(~variables, ~onCompleted=({makeSendpaySession}, _) => {
+      switch makeSendpaySession {
+      | MakeSessionResultOk({id}) =>
+        setParams(
+          ~setter=_ => {sendpayId: Some(id)},
+          ~onAfterParamsSet=_ => {
             window->Window.open_(
-              ~url=`${sendAppUrl}/send/confirm?idType=tag&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
+              ~url=`${sendAppUrl}/send/confirm?idType=${idType}&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
                   chain,
                 )}`,
-              ~target="OpenSendWindow",
-              ~features=Popup,
+              ~target="_blank",
+              ~features=?switch DeviceDetect.isMobile {
+              | false => Some(Popup)
+              | true => None
+              },
             )
-            setSendpayState(_ => Login)
-          }
-        },
-      )->RescriptRelay.Disposable.ignore
-    | _ => ()
-    }
+          },
+          ~shallow=false,
+        )
+      | MakeSessionResultError({name}) => setError(_ => name->Some)
+      | UnselectedUnionMember(_) => ()
+      }
+    })->RescriptRelay.Disposable.ignore
   }
 
   let consumeSendpaySession = () => {
-    consumeSession(~variables=(), ~onCompleted=({consumeSendpaySession}, mutationErrors) =>
+    consumeSession(~variables=(), ~onCompleted=({consumeSendpaySession}, _) =>
       switch consumeSendpaySession {
       | ConsumeSessionResultOk({sendId, address, about, sendtag, avatar_url, refcode}) =>
         setUser(_ => Some({sendId, address, about, sendtag, avatar_url, refcode}))
+        setParams(~setter=_ => {sendpayId: None})
       | ConsumeSessionResultError(consumeSessionResultError) =>
         setError(_ => consumeSessionResultError.name->Some)
+        setParams(~setter=_ => {sendpayId: None})
         Console.log(consumeSessionResultError.name)
       | UnselectedUnionMember(_) => ()
       }
@@ -173,44 +179,46 @@ let make = () => {
   | Tag(Some(tag)) => tag
   | _ => ""
   }
-
   <div className="h-full flex flex-col justify-center items-center">
     <div
       className="flex flex-col items-center p-6 bg-color12 text-center rounded-lg w-full md:w-1/2 max-w-[400px] min-h-[300px]">
       <h3 className="text-4xl font-semibold text-color1"> {React.string("Login with /send")} </h3>
       <div className="flex flex-col items-center gap-2 flex-1 w-full py-2">
-        {switch (sendpayState, user) {
-        | (_, Some(user)) =>
+        {switch (identifier, user, queryParams.sendpayId) {
+        | (_, Some(user), _) =>
           <>
             <div className="flex flex-1 flex-col w-full justify-center items-center my-auto">
               <img src={user.avatar_url->Option.getOr("")} className="w-24 h-24 rounded-full" />
               <p> {React.string(`Logged in as /${user.sendtag->Option.getOr("No Sendtag")}`)} </p>
             </div>
           </>
-        | (SignIn, None) =>
+        | (SendId(None), None, None) | (Tag(None), None, None) =>
           <>
-            <div className="flex flex-1 w-full justify-center items-center my-auto">
-              <input
-                placeholder="Enter Sendtag"
-                onChange={event => {
-                  setIdentifier(_ => Tag(ReactEvent.Form.target(event)["value"]->Some))
-                }}
-                className="border w-full  border-color0  hover:border-color11 focus:border-color11 focus:ring-0 rounded-md p-2 flex items-center"
-              />
-            </div>
-            <button
-              className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3 disabled:opacity-50 "
-              disabled={isMakingSession}
-              onClick={_ => {
-                setSendpayState(_ => Proceed)
+            <form
+              className="flex flex-col flex-1 w-full justify-center items-center my-auto"
+              onSubmit={event => {
+                event->ReactEvent.Form.preventDefault
+                setIdentifier(_ => Tag(ReactEvent.Form.target(event)["0"]["value"]))
               }}>
-              <div className="w-4 h-4">
-                <IconSendLogo />
+              <div className="flex flex-1 w-full justify-center items-center my-auto">
+                <input
+                  name="value"
+                  placeholder="Enter Sendtag"
+                  className="border w-full  border-color0  hover:border-color11 focus:border-color11 focus:ring-0 rounded-md p-2 flex items-center"
+                />
               </div>
-              <p className="text-color0"> {React.string("Sign In")} </p>
-            </button>
+              <button
+                className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3 disabled:opacity-50 "
+                disabled={isMakingSession}
+                type_="submit">
+                <div className="w-4 h-4">
+                  <IconSendLogo />
+                </div>
+                <p className="text-color0"> {React.string("Sign In")} </p>
+              </button>
+            </form>
           </>
-        | (Proceed, None) =>
+        | (SendId(Some(_)), None, None) | (Tag(Some(_)), None, None) =>
           <>
             <div className="flex flex-1 w-full justify-center items-center my-auto">
               <p> {React.string(`Send .01 USDC from sendtag /${formattedIdentifier} to login`)} </p>
@@ -221,15 +229,13 @@ let make = () => {
             }}
             <button
               className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3 "
-              onClick={_ => makeSendpaySession()}>
+              onClick={_ => makeSendpaySession(identifier)}>
               <p className="text-color0"> {React.string("Proceed")} </p>
             </button>
           </>
-        | (Login, None) =>
-          <>
-            <div className="flex flex-1 w-full justify-center items-center my-auto">
-              <p> {React.string("Login after confirming the transaction")} </p>
-            </div>
+        | (_, _, Some(_)) =>
+          <div
+            className="flex flex-col flex-1 w-full justify-center items-center my-auto text-center">
             {switch error {
             | Some(error) => <p className="text-red-500 text-sm"> {React.string(error)} </p>
             | None => React.null
@@ -243,7 +249,7 @@ let make = () => {
               </div>
               <p className="text-color0"> {React.string("Login")} </p>
             </button>
-          </>
+          </div>
         }}
       </div>
     </div>
