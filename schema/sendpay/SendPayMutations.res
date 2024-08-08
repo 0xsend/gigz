@@ -34,7 +34,7 @@ let makeSendpaySession = async (
   switch await SendApi.profileLookup(identifier) {
   | Error(err) =>
     Console.error(err)
-    Error({name: "SendPay Error", reason: "Something went wrong"})
+    Error({name: "Send Error", reason: "Something went wrong fetching send profile"})
   | Ok({address: Null | Undefined}) => Error({name: "SendPay Error", reason: "No send account"})
   | Ok({sendid, address: Value(address), avatar_url: avatarUrl, about, refcode}) =>
     // Check if profile exists

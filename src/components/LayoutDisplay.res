@@ -144,7 +144,7 @@ let make = () => {
               ~url=`${sendAppUrl}/send/confirm?idType=${idType}&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
                   chain,
                 )}`,
-              ~target="_blank",
+              ~target="_top",
               ~features=?switch DeviceDetect.isMobile {
               | false => Some(Popup)
               | true => None
