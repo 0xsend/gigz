@@ -45,7 +45,7 @@ input MakeSessionInputBySendId {
   chain: Chain
 
   """The ethereum address to receive the confirmation tx"""
-  confirmationAddress: String
+  confirmationAddress: String!
 
   """The amount of tokens to send to the confirmation address"""
   confirmationAmount: BigInt
@@ -62,7 +62,7 @@ input MakeSessionInputByTag {
   chain: Chain
 
   """The ethereum address to receive the confirmation tx"""
-  confirmationAddress: String
+  confirmationAddress: String!
 
   """The amount of tokens to send to the confirmation address"""
   confirmationAmount: BigInt

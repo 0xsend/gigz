@@ -1,4 +1,4 @@
-// @sourceHash c870f104e79bc75272e2d84df5d438d8
+// @sourceHash c2c74ea0041c3a2c26d6c82404f12adf
 
 module MakeSession = {
   let queryText = `# @name makeSession
@@ -10,7 +10,7 @@ module MakeSession = {
         avatar_url := <optional str>$avatarUrl,
         about := <optional str>$about,
         refcode := <optional str>$refcode,
-        confirmation_address := <optional str>$confirmationAddress,
+        confirmation_address := <str>$confirmationAddress,
         confirmation_amount := <optional bigint>$confirmationAmount,
         chain_id := <optional SupportedChainId>$chainId,
         expires_at := <optional datetime>$expiresAt
@@ -25,7 +25,7 @@ module MakeSession = {
     avatarUrl?: Null.t<string>,
     about?: Null.t<string>,
     refcode?: Null.t<string>,
-    confirmationAddress?: Null.t<string>,
+    confirmationAddress: string,
     confirmationAmount?: Null.t<bigint>,
     chainId?: Null.t<int>,
     expiresAt?: Null.t<Date.t>,

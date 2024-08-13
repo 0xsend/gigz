@@ -14,7 +14,7 @@ let makeSendpaySession = async (
     chain,
     duration,
   ) = switch input {
-  | BySendId({sendid, ?confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
+  | BySendId({sendid, confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
       SendApi.SendId(sendid),
       Null.null,
       confirmationAddress,
@@ -22,7 +22,7 @@ let makeSendpaySession = async (
       chain,
       duration,
     )
-  | ByTag({tag, ?confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
+  | ByTag({tag, confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
       SendApi.Tag(tag),
       tag->Null.make,
       confirmationAddress,
@@ -46,7 +46,7 @@ let makeSendpaySession = async (
       about: about->Nullable.mapOr(Null.null, Null.make),
       refcode: Null.make(refcode),
       address,
-      confirmationAddress: confirmationAddress->Null.fromOption,
+      confirmationAddress: confirmationAddress,
       confirmationAmount: confirmationAmount->Option.mapOr(Null.make(0n), Null.make),
       chainId: chain->Option.map(Chain.toId)->Null.fromOption,
       //@todo: passing null causes the db entry to be null, so we set default to 5 minutes here.
