@@ -130,13 +130,11 @@ let input_TodoUpdateInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents"
 let get_TodoUpdateInput = () => input_TodoUpdateInput.contents
 let input_TodoUpdateInput_conversionInstructions = []
 input_MakeSessionInputBySendId_conversionInstructions->Array.pushMany([
-  ("confirmationAddress", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("confirmationAmount", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("chain", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("duration", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
 ])
 input_MakeSessionInputByTag_conversionInstructions->Array.pushMany([
-  ("confirmationAddress", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("confirmationAmount", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("chain", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("duration", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
@@ -809,7 +807,7 @@ input_MakeSessionInputBySendId.contents = GraphQLInputObjectType.make({
         deprecationReason: ?None,
       },
       "confirmationAddress": {
-        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
         description: "The ethereum address to receive the confirmation tx",
         deprecationReason: ?None,
       },
@@ -841,7 +839,7 @@ input_MakeSessionInputByTag.contents = GraphQLInputObjectType.make({
         deprecationReason: ?None,
       },
       "confirmationAddress": {
-        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
         description: "The ethereum address to receive the confirmation tx",
         deprecationReason: ?None,
       },

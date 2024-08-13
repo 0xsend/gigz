@@ -9,7 +9,7 @@ let query = %edgeql(`
       avatar_url := <optional str>$avatarUrl,
       about := <optional str>$about,
       refcode := <optional str>$refcode,
-      confirmation_address := <optional str>$confirmationAddress,
+      confirmation_address := <str>$confirmationAddress,
       confirmation_amount := <optional bigint>$confirmationAmount,
       chain_id := <optional SupportedChainId>$chainId,
       expires_at := <optional datetime>$expiresAt
@@ -22,7 +22,7 @@ type makeSessionInput =     //@todo: probably a better way to spread these value
       /** The sendid to request a session for*/
       sendid: float,
       /** The ethereum address to receive the confirmation tx */
-      confirmationAddress?: string,
+      confirmationAddress: string,
       /** The amount of tokens to send to the confirmation address */
       confirmationAmount?: Schema.BigInt.t,
       /** The chain id to use for the session */
@@ -34,7 +34,7 @@ type makeSessionInput =     //@todo: probably a better way to spread these value
       /** The sendtag to request a session for*/
       tag: string,
       /** The ethereum address to receive the confirmation tx */
-      confirmationAddress?: string,
+      confirmationAddress: string,
       /** The amount of tokens to send to the confirmation address */
       confirmationAmount?: Schema.BigInt.t,
       /** The chain id to use for the session */
