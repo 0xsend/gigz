@@ -3,6 +3,7 @@
 import * as Viem from "viem";
 import * as Edgedb from "edgedb";
 import * as Constants from "../src/Constants.mjs";
+import * as Nodehttp from "node:http";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as DataLoaders from "../schema/DataLoaders.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.mjs";
@@ -28,6 +29,25 @@ var $$default = GraphqlYoga.createYoga({
         }),
       graphqlEndpoint: "/api/graphql"
     });
+
+if (Core__Option.isNone(process.env.VERCEL_ENV)) {
+  var yoga = GraphqlYoga.createYoga({
+        schema: ResGraphSchema.schema,
+        context: (async function (param) {
+            return {
+                    sendpayKey: Core__Option.getOr(Caml_option.nullable_to_opt(param.request.headers.get("x-sendpay-key")), ""),
+                    dataLoaders: DataLoaders.make(),
+                    edgedbClient: edgedbClient,
+                    viemClient: viemClient
+                  };
+          }),
+        graphqlEndpoint: "/api/graphql"
+      });
+  var server = Nodehttp.createServer(yoga);
+  server.listen(9000, (function () {
+          console.info("Server is running on http://localhost:9000/api/graphql");
+        }));
+}
 
 export {
   edgedbClient ,
