@@ -15,7 +15,7 @@ let makeSendpaySession = async (
     duration,
   ) = switch input {
   | BySendId({sendid, confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
-      SendApi.SendId(sendid),
+      Api.Send.SendId(sendid),
       Null.null,
       confirmationAddress,
       confirmationAmount,
@@ -23,7 +23,7 @@ let makeSendpaySession = async (
       duration,
     )
   | ByTag({tag, confirmationAddress, ?confirmationAmount, ?chain, ?duration}) => (
-      SendApi.Tag(tag),
+      Api.Send.Tag(tag),
       tag->Null.make,
       confirmationAddress,
       confirmationAmount,
@@ -31,7 +31,7 @@ let makeSendpaySession = async (
       duration,
     )
   }
-  switch await SendApi.profileLookup(identifier) {
+  switch await Api.Send.profileLookup(identifier) {
   | Error(err) =>
     Console.error(err)
     Error({name: "Send Error", reason: "Something went wrong fetching send profile"})
@@ -46,7 +46,7 @@ let makeSendpaySession = async (
       about: about->Nullable.mapOr(Null.null, Null.make),
       refcode: Null.make(refcode),
       address,
-      confirmationAddress: confirmationAddress,
+      confirmationAddress,
       confirmationAmount: confirmationAmount->Option.mapOr(Null.make(0n), Null.make),
       chainId: chain->Option.map(Chain.toId)->Null.fromOption,
       //@todo: passing null causes the db entry to be null, so we set default to 5 minutes here.

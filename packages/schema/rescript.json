@@ -1,0 +1,37 @@
+{
+  "name": "@my/schema",
+  "uncurried": true,
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "edgedb",
+      "subdirs": true
+    },
+    {
+      "dir": "__generated__",
+      "subdirs": true
+    }
+  ],
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": true
+  },
+  "suffix": ".mjs",
+  "ppx-flags": [
+    "rescript-embed-lang/ppx"
+  ],
+  "bs-dependencies": [
+    "@rescript/core",
+    "@my/bindings",
+    "@my/api",
+    "resgraph",
+    "rescript-edgedb"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore",
+    "-open Bindings"
+  ]
+}

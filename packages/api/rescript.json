@@ -1,0 +1,33 @@
+{
+  "name": "@my/api",
+  "namespace": "Api",
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "esmodule",
+      "in-source": true
+    }
+  ],
+  "ppx-flags": [
+    [
+      "@greenlabs/ppx-spice/ppx",
+      "-uncurried"
+    ]
+  ],
+  "suffix": ".mjs",
+  "bs-dependencies": [
+    "@rescript/core",
+    "@my/bindings",
+    "@greenlabs/ppx-spice",
+    "@glennsl/rescript-fetch"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore",
+    "-open Bindings"
+  ]
+}

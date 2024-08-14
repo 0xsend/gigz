@@ -1,0 +1,12 @@
+{
+  "name": "@my/edgedb",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "dependencies": {
+    "edgedb": "^1.5.9"
+  },
+  "packageManager": "yarn@4.3.1"
+}

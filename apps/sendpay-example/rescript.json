@@ -1,0 +1,37 @@
+{
+  "name": "@my/sendpay-example",
+  "sources": {
+    "dir": "src",
+    "subdirs": true
+  },
+  "jsx": {
+    "version": 4,
+    "mode": "automatic"
+  },
+  "package-specs": [
+    {
+      "module": "esmodule",
+      "in-source": true
+    }
+  ],
+  "suffix": ".mjs",
+  "ppx-flags": [
+    [
+      "rescript-relay/ppx",
+      "-uncurried"
+    ]
+  ],
+  "bs-dependencies": [
+    "@rescript/react",
+    "rescript-relay",
+    "rescript-relay-router",
+    "@rescript/core",
+    "@glennsl/rescript-fetch",
+    "@my/bindings",
+    "@my/schema"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore",
+    "-open Bindings"
+  ]
+}
