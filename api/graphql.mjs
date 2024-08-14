@@ -2,13 +2,13 @@
 
 import * as Viem from "viem";
 import * as Edgedb from "edgedb";
-import * as Constants from "../src/Constants.mjs";
+import * as Constants from "@my/schema/src/Constants.mjs";
 import * as Nodehttp from "node:http";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
-import * as DataLoaders from "../schema/DataLoaders.mjs";
+import * as DataLoaders from "@my/schema/src/DataLoaders.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.mjs";
 import * as GraphqlYoga from "graphql-yoga";
-import * as ResGraphSchema from "../schema/__generated__/ResGraphSchema.mjs";
+import * as ResGraphSchema from "@my/schema/__generated__/ResGraphSchema.mjs";
 
 var edgedbClient = Edgedb.createClient();
 

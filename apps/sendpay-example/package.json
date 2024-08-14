@@ -1,0 +1,49 @@
+{
+  "name": "@my/sendpay-example",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:relay && npm run router:generate && npm run build:vite",
+    "build:relay": "rescript-relay-compiler",
+    "rescript:build": "rewatch build",
+    "build:vite": "vite build --outDir dist/client",
+    "preview": "cross-env ENABLE_FILESERVER=true yarn start",
+    "router:generate": "rescript-relay-router generate",
+    "dev": "concurrently 'npm:dev:*'",
+    "dev:relay": "rescript-relay-compiler --watch",
+    "dev:vite": "vite",
+    "rescript:dev": "rewatch watch",
+    "dev:schema": "npx -y get-graphql-schema http://localhost:9000/api/graphql > schema.graphql",
+    "setup": "npm run build:relay && npm run router:generate",
+    "postinstall": "npm run setup"
+  },
+  "devDependencies": {
+    "@glennsl/rescript-fetch": "^0.2.0",
+    "@rescript/react": "^0.13.0",
+    "@vitejs/plugin-react": "4.3.1",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.31",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-relay": "17.0.0",
+    "relay-runtime": "17.0.0",
+    "rescript-relay": "^3.0.1",
+    "rescript-relay-router": "1.4.1",
+    "rollup-plugin-visualizer": "5.12.0",
+    "tailwindcss": "3.4.6",
+    "vite": "5.3.4",
+    "vite-plugin-html": "3.2.2",
+    "vite-plugin-vercel": "^8.0.0"
+  },
+  "dependencies": {
+    "@my/bindings": "*",
+    "@my/schema": "*",
+    "jose": "^5.6.3",
+    "react-device-detect": "^2.2.3"
+  },
+  "packageManager": "yarn@4.3.1"
+}

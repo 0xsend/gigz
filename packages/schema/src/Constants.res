@@ -1,4 +1,5 @@
 open SendPay_Types.Chain
+
 @val @scope(("process", "env"))
 external baseSepoliaRpcUrl: option<string> = "BASE_SEPOLIA_RPC_URL"
 

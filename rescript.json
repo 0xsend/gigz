@@ -1,31 +1,17 @@
 {
-  "name": "rescript-relay-starter",
+  "name": "gigz",
   "uncurried": true,
+  "version": "1.0.0",
   "jsx": {
     "version": 4,
     "mode": "automatic"
   },
-  "version": "1.0.0",
   "sources": [
     {
-      "dir": "src",
-      "subdirs": true
-    },
-    {
       "dir": "api",
-      "subdirs": true
-    },
-    {
-      "dir": "schema",
-      "subdirs": true
-    },
-    {
-      "dir": "edgedb",
-      "subdirs": true
-    },
-    {
-      "dir": "bindings",
-      "subdirs": true
+      "files": [
+        "graphql.res"
+      ]
     }
   ],
   "package-specs": [
@@ -35,28 +21,24 @@
     }
   ],
   "suffix": ".mjs",
-  "ppx-flags": [
-    "rescript-embed-lang/ppx",
-    [
-      "@greenlabs/ppx-spice/ppx",
-      "-uncurried"
-    ],
-    [
-      "rescript-relay/ppx",
-      "-uncurried"
-    ]
+  "pinned-dependencies": [
+    "@my/schema",
+    "@my/api",
+    "@my/bindings",
+    "@my/sendpay-example"
   ],
   "bs-dependencies": [
     "resgraph",
-    "@greenlabs/ppx-spice",
-    "@rescript/react",
-    "rescript-relay",
-    "rescript-relay-router",
+    "rescript-edgedb",
     "@rescript/core",
     "@glennsl/rescript-fetch",
-    "rescript-edgedb"
+    "@my/schema",
+    "@my/bindings",
+    "@my/sendpay-example",
+    "@my/api"
   ],
   "bsc-flags": [
-    "-open RescriptCore"
+    "-open RescriptCore",
+    "-open Bindings"
   ]
 }

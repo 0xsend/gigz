@@ -1,0 +1,25 @@
+{
+  "name": "@my/api",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "rewatch build",
+    "dev": "rewatch watch"
+  },
+  "devDependencies": {
+    "@glennsl/rescript-fetch": "^0.2.0",
+    "@greenlabs/ppx-spice": "^0.2.1",
+    "@rescript/core": "1.5.2",
+    "@rolandpeelen/rewatch": "^1.0.8",
+    "concurrently": "^8.2.2",
+    "rescript": "^11.1.3"
+  },
+  "dependencies": {
+    "@my/bindings": "*",
+    "resgraph": "^0.10.0"
+  },
+  "packageManager": "yarn@4.3.1"
+}

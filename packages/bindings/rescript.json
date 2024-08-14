@@ -1,0 +1,21 @@
+{
+  "name": "@my/bindings",
+  "namespace": "Bindings",
+  "uncurried": true,
+  "version": "1.0.0",
+  "suffix": ".mjs",
+  "sources": {
+    "dir": "src",
+    "subdirs": true
+  },
+  "package-specs": {
+    "module": "esmodule",
+    "in-source": true
+  },
+  "bs-dependencies": [
+    "@rescript/core"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
+}

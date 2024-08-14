@@ -1,0 +1,33 @@
+{
+  "name": "@my/schema",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:edgedb && npm run build:resgraph && npm run build:rescript",
+    "build:edgedb": "rescript-edgedb generate --output ./edgedb/__generated__ --src .",
+    "build:resgraph": "resgraph build",
+    "build:rescript": "rewatch build",
+    "dev": "concurrently 'npm:dev:*'",
+    "dev:resgraph": "resgraph watch",
+    "dev:rescript": "rewatch watch ."
+  },
+  "devDependencies": {
+    "@rescript/core": "1.5.2",
+    "concurrently": "^8.2.2",
+    "graphql": "^16.9.0",
+    "rescript": "11.1.3",
+    "rescript-edgedb": "^0.7.0",
+    "rescript-embed-lang": "^0.5.5"
+  },
+  "dependencies": {
+    "@my/api": "*",
+    "@my/bindings": "*",
+    "@rolandpeelen/rewatch": "^1.0.8",
+    "graphql-yoga": "^5.6.2",
+    "resgraph": "^0.10.0"
+  },
+  "packageManager": "yarn@4.3.1"
+}

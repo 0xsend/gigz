@@ -7,8 +7,8 @@ let make = () => {
           {React.string("Sendpay Example App")}
         </h1>
         <div className="h-14 border border-color11 rounded-md p-2 flex items-center space-x-3">
-          <div className="w-10 rounded-lg">
-            <IconLogo />
+          <div className="w-10 h-10 flex justify-center items-center p-2 rounded-md bg-color11">
+            <IconSendLogo />
           </div>
           <p className="text-color12 font-semibold font-mono text-xl"> {React.string("v0.0.0")} </p>
         </div>
