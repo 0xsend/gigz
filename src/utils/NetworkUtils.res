@@ -1,12 +1,13 @@
 @val @scope(("import", "meta", "env"))
 external port: option<string> = "VITE_PORT"
-let port = port->Option.getOr("3000")
+let port = port->Option.getOr("9000")
 
 let url = {
   open Vercel.Vite
   switch env {
   | Some(Production) => `https://${projectProductionUrl}/api/graphql`
-  | Some(Development) | None => `http://localhost:${port}/api/graphql`
+  | Some(Development) => `http://localhost:3000/api/graphql`
+  | None => `http://localhost:${port}/api/graphql`
   | Some(Preview) => `https://${url}/api/graphql`
   }
 }

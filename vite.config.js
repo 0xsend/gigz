@@ -22,9 +22,6 @@ export default defineConfig({
       "rescript-relay",
     ],
   },
-  server: {
-    port: 9000,
-  },
   build: {
     sourcemap: true,
     polyfillDynamicImport: false,
