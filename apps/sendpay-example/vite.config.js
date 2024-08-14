@@ -15,6 +15,9 @@ export default defineConfig({
   vercel: {
     rewrites: [{ "source": "/(.*)", "destination": "/client" }]
   },
+  server: {
+    port: process.env.PORT,
+  },
   ssr: {
     noExternal: [
       // Work around the fact that rescript-relay is not yet an ESM module

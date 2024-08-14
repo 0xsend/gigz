@@ -16,13 +16,13 @@
     "build:rescript": "rescript build -with-deps",
     "watch": "rewatch watch .",
     "watch:rescript": "rescript watch -with-deps",
-    "dev:server": "node --env-file=.env.local ./api/graphql.mjs",
     "clean": "rewatch clean .",
     "clean:rescript": "rescript clean",
     "sendpay-example": "yarn workspace @my/sendpay-example",
     "bindings": "yarn workspace @my/bindings",
     "schema": "yarn workspace @my/schema",
-    "api": "yarn workspace @my/api"
+    "api": "yarn workspace @my/api",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@rescript/core": "1.5.2",
