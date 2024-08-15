@@ -16,18 +16,11 @@
     }
   ],
   "suffix": ".mjs",
-  "ppx-flags": [
-    [
-      "rescript-relay/ppx",
-      "-uncurried"
-    ]
-  ],
   "bs-dependencies": [
     "@rescript/react",
-    "rescript-relay",
-    "rescript-relay-router",
     "@rescript/core",
     "@glennsl/rescript-fetch",
+    "@rescriptbr/react-query",
     "@my/bindings",
     "@my/schema"
   ],

@@ -7,14 +7,8 @@ import vercel from 'vite-plugin-vercel';
 export default defineConfig({
   plugins: [
     react(),
-    rescriptRelayVitePlugin({
-      autoScaffoldRenderers: true,
-    }),
     vercel(),
   ],
-  vercel: {
-    rewrites: [{ "source": "/(.*)", "destination": "/client" }]
-  },
   server: {
     port: process.env.PORT,
   },
@@ -35,7 +29,6 @@ export default defineConfig({
         format: "esm",
         manualChunks: {
           react: ["react", "react-dom"],
-          relay: ["react-relay", "relay-runtime"],
         },
       },
     },

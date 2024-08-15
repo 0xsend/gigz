@@ -959,6 +959,8 @@ __metadata:
     "@my/bindings": "npm:*"
     "@my/schema": "npm:*"
     "@rescript/react": "npm:^0.13.0"
+    "@rescriptbr/react-query": "npm:^1.1.1"
+    "@tanstack/react-query": "npm:^5.51.23"
     "@vitejs/plugin-react": "npm:4.3.1"
     autoprefixer: "npm:^10.4.16"
     comlink: "npm:^4.4.1"
@@ -968,10 +970,6 @@ __metadata:
     react: "npm:^18.2.0"
     react-device-detect: "npm:^2.2.3"
     react-dom: "npm:^18.2.0"
-    react-relay: "npm:17.0.0"
-    relay-runtime: "npm:17.0.0"
-    rescript-relay: "npm:^3.0.1"
-    rescript-relay-router: "npm:1.4.1"
     rollup-plugin-visualizer: "npm:5.12.0"
     tailwindcss: "npm:3.4.6"
     vite: "npm:5.3.4"
@@ -1154,6 +1152,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rescriptbr/react-query@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@rescriptbr/react-query@npm:1.1.1"
+  peerDependencies:
+    "@rescript/react": ">=0.10.3"
+    react: ">=17.0.2"
+    react-dom: ">=17.0.2"
+    rescript: ">=10.0.1"
+  checksum: 10c0/9cf6d94a9c39e42e77185cba017f032450250b0deab9a066592c4ecf6d5b16f7b57bc57d4e30f9341dd6d2fb6f49d8f392d68b67f226b66171982bb4462799c2
+  languageName: node
+  linkType: hard
+
 "@rolandpeelen/rewatch@npm:^1.0.8":
   version: 1.0.8
   resolution: "@rolandpeelen/rewatch@npm:1.0.8"
@@ -1310,6 +1320,24 @@ __metadata:
     "@noble/hashes": "npm:~1.4.0"
     "@scure/base": "npm:~1.1.6"
   checksum: 10c0/1ae1545a7384a4d9e33e12d9e9f8824f29b0279eb175b0f0657c0a782c217920054f9a1d28eb316a417dfc6c4e0b700d6fbdc6da160670107426d52fcbe017a8
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-core@npm:5.51.21":
+  version: 5.51.21
+  resolution: "@tanstack/query-core@npm:5.51.21"
+  checksum: 10c0/bb9e03391facd21c431d6571f3e088f47dc996b42a10ef636d3fd4444a483019d0e9bd4eb971d554bb4317ac3ee3ab23d5ce9221345753b792fb6fae030d1ad7
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.51.23":
+  version: 5.51.23
+  resolution: "@tanstack/react-query@npm:5.51.23"
+  dependencies:
+    "@tanstack/query-core": "npm:5.51.21"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 10c0/913566a6778197b0b6dd04416e7ccb2fc766b4c0d04b0dc7f0e10f2bb5dee5663688369e363ae129ccbc1844578f57c81ee7599fac7f3b90ab9611bc52a35e69
   languageName: node
   linkType: hard
 

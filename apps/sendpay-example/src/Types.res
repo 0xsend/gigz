@@ -1,48 +1,15 @@
-/* @generated */
-@@warning("-30")
-
 @live @unboxed
-type enum_Chain = 
+type enum_Chain =
   | Mainnet
   | Base
   | BaseSepolia
   | FutureAddedValue(string)
 
-
 @live @unboxed
-type enum_Chain_input = 
+type enum_Chain_input =
   | Mainnet
   | Base
   | BaseSepolia
-
-
-@live @unboxed
-type enum_RequiredFieldAction = 
-  | NONE
-  | LOG
-  | THROW
-  | FutureAddedValue(string)
-
-
-@live @unboxed
-type enum_RequiredFieldAction_input = 
-  | NONE
-  | LOG
-  | THROW
-
-
-@live @unboxed
-type enum_CatchFieldTo = 
-  | NULL
-  | RESULT
-  | FutureAddedValue(string)
-
-
-@live @unboxed
-type enum_CatchFieldTo_input = 
-  | NULL
-  | RESULT
-
 
 @live
 type rec input_MakeSessionInput = {
@@ -90,30 +57,4 @@ and input_MakeSessionInputByTag_nullable = {
   confirmationAmount?: Js.Null.t<Schema.BigInt.t>,
   duration?: Js.Null.t<float>,
   tag: string,
-}
-
-@live
-and input_TodoAddInput = {
-  completed: bool,
-  text: string,
-}
-
-@live
-and input_TodoAddInput_nullable = {
-  completed: bool,
-  text: string,
-}
-
-@live
-and input_TodoUpdateInput = {
-  completed?: bool,
-  text?: string,
-  todoId: string,
-}
-
-@live
-and input_TodoUpdateInput_nullable = {
-  completed?: Js.Null.t<bool>,
-  text?: Js.Null.t<string>,
-  todoId: string,
 }

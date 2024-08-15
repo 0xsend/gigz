@@ -1,8 +1,20 @@
+open Types
+
+// Patch BigInt for react query
+%%raw(`
+BigInt.prototype['toJSON'] = function () {
+  return this.toString()
+}
+`)
+
+@val @scope(("import", "meta", "env"))
+external port: option<string> = "VITE_PORT"
+let port = port->Option.getOr("9000")
+
 module DeviceDetect = {
   @module("react-device-detect") @val external isMobile: bool = "isMobile"
 }
 
-type chain = Mainnet | Base | BaseSepolia
 module Window = {
   type t = Dom.window
   type windowFeatures = | @as("popup,height=800px,width=800px") Popup
@@ -10,40 +22,6 @@ module Window = {
   external open_: (t, ~url: string=?, ~target: string=?, ~features: windowFeatures=?) => unit =
     "open"
 }
-
-module MakeSendpaySessionMutation = %relay(`
-  mutation LayoutDisplayMakeSendpaySessionMutation($input: MakeSessionInput!) {
-    makeSendpaySession(input: $input) {
-      ... on MakeSessionResultOk {
-        id
-      }
-      ... on MakeSessionResultError {
-        name
-        reason
-      }
-    }
-  }
-`)
-
-module ConsumeSessionMutation = %relay(`
-  mutation LayoutDisplayConsumeSessionMutation {
-    consumeSendpaySession {
-      ... on ConsumeSessionResultOk {
-        sendId
-        address
-        sendtag
-        avatar_url
-        about
-        refcode
-        chainId
-      }
-      ... on ConsumeSessionResultError {
-        name
-        reason
-      }
-    }
-  }
-`)
 
 let confirmationAddress = switch Vercel.Vite.env {
 | Some(Production) => "0x7CE90eF0f63c786C627576cFFa6d942fB55Ae385"
@@ -88,91 +66,175 @@ type user = {
   about: option<string>,
   refcode: option<string>,
 }
+
+let graphqlUrl = {
+  open Vercel.Vite
+  switch env {
+  | Some(Production) => `https://${projectProductionUrl}/api/graphql`
+  | Some(Development) => `http://localhost:3000/api/graphql`
+  | None => `http://localhost:${port}/api/graphql`
+  | Some(Preview) => `https://${url}/api/graphql`
+  }
+}
+
+let makeSendPaySessionQuery = `
+ mutation LayoutDisplayMakeSendpaySessionMutation($input: MakeSessionInput!) {
+    makeSendpaySession(input: $input) {
+      ... on MakeSessionResultOk {
+        id
+      }
+      ... on MakeSessionResultError {
+        name
+        reason
+      }
+    }
+  }
+    `
+
+let consumeSendpaySessionQuery = `
+ mutation LayoutDisplayConsumeSendpaySessionMutation {
+    consumeSendpaySession {
+      ... on ConsumeSessionResultOk {
+        sendId
+        address
+        about
+        sendtag
+        avatar_url
+        refcode
+      }
+      ... on ConsumeSessionResultError {
+        name
+        reason
+      }
+    }
+  }
+  `
+
+type makeSendPaySessionVariables = {input: input_MakeSessionInput}
+
+let makeSendpaySessionMutation = async (~variables) => {
+  open Fetch
+  let res = await fetch(
+    graphqlUrl,
+    {
+      method: #POST,
+      headers: Headers.fromArray([
+        ("content-type", "application/json"),
+        (
+          "x-sendpay-key",
+          Dom.Storage2.localStorage->Dom.Storage2.getItem("sendpay_sendpayKey")->Option.getOr(""),
+        ),
+      ]),
+      body: Body.string(
+        {"query": makeSendPaySessionQuery, "variables": variables}
+        ->JSON.stringifyAny
+        ->Option.getOr(""),
+      ),
+      credentials: #"same-origin",
+    },
+  )
+  let json = await res->Response.json
+}
+
+let consumeSendpaySessionMutation = async () => {
+  open Fetch
+  await fetch(
+    graphqlUrl,
+    {
+      method: #POST,
+      headers: Headers.fromArray([
+        ("content-type", "application/json"),
+        (
+          "x-sendpay-key",
+          Dom.Storage2.localStorage->Dom.Storage2.getItem("sendpay_sendpayKey")->Option.getOr(""),
+        ),
+      ]),
+      body: Body.string(
+        {"query": consumeSendpaySessionQuery, "variables": ()}
+        ->JSON.stringifyAny
+        ->Option.getOr(""),
+      ),
+      credentials: #"same-origin",
+    },
+  )
+}
+
 @react.component
 let make = () => {
   let (identifier, setIdentifier) = React.useState(_ => Tag(None))
-  let (makeSession, isMakingSession) = MakeSendpaySessionMutation.use()
-  let (consumeSession, isConsumingSession) = ConsumeSessionMutation.use()
+  let (sendpayId, setSendpayId) = React.useState(_ => None)
+
   let (error, setError) = React.useState(_ => None)
   let (user, setUser) = React.useState(_ => None)
-  let {queryParams, setParams} = Routes.Root.Route.useQueryParams()
 
-  let makeSendpaySession = identifier => {
-    open LayoutDisplayMakeSendpaySessionMutation_graphql.Types
-    let (variables, idType) = switch identifier {
-    | SendId(Some(sendid)) => (
-        {
-          input: {
-            bySendId: {
-              sendid,
-              confirmationAddress,
-              confirmationAmount: Viem.parseUnits("0.01", 6)->Option.getUnsafe,
-              chain: switch Vercel.Vite.env {
-              | Some(Production) => Base
-              | Some(Preview) | Some(Development) | None => BaseSepolia
-              },
+  let makeSendpaySessionVariables = identifier =>
+    switch identifier {
+    | SendId(Some(sendid)) => {
+        input: {
+          bySendId: {
+            sendid,
+            confirmationAddress,
+            confirmationAmount: Viem.parseUnits("0.01", 6)->Option.getUnsafe,
+            chain: switch Vercel.Vite.env {
+            | Some(Production) => Base
+            | Some(Preview) | Some(Development) | None => BaseSepolia
             },
           },
         },
-        "sendid",
-      )
-    | Tag(Some(tag)) => (
-        {
-          input: {
-            byTag: {
-              tag,
-              confirmationAddress,
-              confirmationAmount: Viem.parseUnits("0.01", 6)->Option.getUnsafe,
-              chain: switch Vercel.Vite.env {
-              | Some(Production) => Base
-              | Some(Preview) | Some(Development) | None => BaseSepolia
-              },
+      }
+    | Tag(Some(tag)) => {
+        input: {
+          byTag: {
+            tag,
+            confirmationAddress,
+            confirmationAmount: Viem.parseUnits("0.01", 6)->Option.getUnsafe,
+            chain: switch Vercel.Vite.env {
+            | Some(Production) => Base
+            | Some(Preview) | Some(Development) | None => BaseSepolia
             },
           },
         },
-        "tag",
-      )
-    | _ => panic("Invalid identifier")
+      }
+    | Tag(None) | SendId(None) => panic("Invalid identifier")
     }
-    makeSession(~variables, ~onCompleted=({makeSendpaySession}, _) => {
-      switch makeSendpaySession {
-      | MakeSessionResultOk({id}) =>
-        setParams(
-          ~setter=_ => {sendpayId: Some(id)},
-          ~onAfterParamsSet=_ => {
-            window->Window.open_(
-              ~url=`${sendAppUrl}/send/confirm?idType=${idType}&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
-                  chain,
-                )}`,
-              ~target="_top",
-              ~features=?switch DeviceDetect.isMobile {
-              | false => Some(Popup)
-              | true => None
-              },
-            )
-          },
-          ~shallow=false,
-        )
-      | MakeSessionResultError({name}) => setError(_ => name->Some)
-      | UnselectedUnionMember(_) => ()
-      }
-    })->RescriptRelay.Disposable.ignore
-  }
 
-  let consumeSendpaySession = () => {
-    consumeSession(~variables=(), ~onCompleted=({consumeSendpaySession}, _) =>
-      switch consumeSendpaySession {
-      | ConsumeSessionResultOk({sendId, address, about, sendtag, avatar_url, refcode}) =>
-        setUser(_ => Some({sendId, address, about, sendtag, avatar_url, refcode}))
-        setParams(~setter=_ => {sendpayId: None})
-      | ConsumeSessionResultError(consumeSessionResultError) =>
-        setError(_ => consumeSessionResultError.name->Some)
-        setParams(~setter=_ => {sendpayId: None})
-        Console.log(consumeSessionResultError.name)
-      | UnselectedUnionMember(_) => ()
-      }
-    )->RescriptRelay.Disposable.ignore
-  }
+  let {mutate: makeSendPaySession} = ReactQuery.useMutation({
+    mutationKey: ["makeSendPaySession"],
+    mutationFn: _ => makeSendpaySessionMutation(~variables=makeSendpaySessionVariables(identifier)),
+    onError: async (error, _, _) => {
+      Console.log(error)
+    },
+    onSuccess: async (makeSendpaySession, _, _) => {
+      Console.log(makeSendpaySession)
+      window->Window.open_(
+        ~url=`${sendAppUrl}/send/confirm?idType=tag&recipient=${recipient}&amount=0.01&sendToken=${usdcAddress(
+            chain,
+          )}`,
+        ~target="_blank",
+        ~features=?switch DeviceDetect.isMobile {
+        | false => Some(Popup)
+        | true => None
+        },
+      )
+    },
+  })
+
+  let {mutate: consumeSendPaySession} = ReactQuery.useMutation({
+    mutationKey: ["consumeSendPaySession"],
+    mutationFn: () => consumeSendpaySessionMutation(),
+    onSuccess: async (consumeSendpaySession, _, _) => {
+      Console.log(consumeSendpaySession)
+      // switch consumeSendpaySession {
+      // | ConsumeSessionResultOk({sendId, address, about, sendtag, avatar_url, refcode}) =>
+      //   setUser(_ => Some({sendId, address, about, sendtag, avatar_url, refcode}))
+      //   setSendpayId(_ => None)
+      // | ConsumeSessionResultError(consumeSessionResultError) =>
+      //   setError(_ => consumeSessionResultError.name->Some)
+      //   setSendpayId(_ => None)
+      //   Console.log(consumeSessionResultError.name)
+      // }
+    },
+  })
 
   let formattedIdentifier = switch identifier {
   | SendId(Some(sendid)) => sendid->Float.toString
@@ -184,7 +246,7 @@ let make = () => {
       className="flex flex-col items-center p-6 bg-color12 text-center rounded-lg w-full md:w-1/2 max-w-[400px] min-h-[300px]">
       <h3 className="text-4xl font-semibold text-color1"> {React.string("Login with /send")} </h3>
       <div className="flex flex-col items-center gap-2 flex-1 w-full py-2">
-        {switch (identifier, user, queryParams.sendpayId) {
+        {switch (identifier, user, sendpayId) {
         | (_, Some(user), _) =>
           <>
             <div className="flex flex-1 flex-col w-full justify-center items-center my-auto">
@@ -209,7 +271,6 @@ let make = () => {
               </div>
               <button
                 className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3 disabled:opacity-50 "
-                disabled={isMakingSession}
                 type_="submit">
                 <div className="w-4 h-4">
                   <IconSendLogo />
@@ -229,7 +290,7 @@ let make = () => {
             }}
             <button
               className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3 "
-              onClick={_ => makeSendpaySession(identifier)}>
+              onClick={_ => makeSendPaySession((), None)}>
               <p className="text-color0"> {React.string("Proceed")} </p>
             </button>
           </>
@@ -242,8 +303,7 @@ let make = () => {
             }}
             <button
               className="bg-color11 rounded-md py-3 px-4 flex items-center space-x-3"
-              onClick={_ => consumeSendpaySession()}
-              disabled={isConsumingSession}>
+              onClick={_ => consumeSendPaySession((), None)}>
               <div className="w-4 h-4">
                 <IconSendLogo />
               </div>
