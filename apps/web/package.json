@@ -1,5 +1,5 @@
 {
-  "name": "@my/sendpay-example",
+  "name": "@my/web",
   "version": "1.0.0",
   "engines": {
     "node": ">=20"

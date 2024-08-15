@@ -23,6 +23,7 @@
     "schema": "yarn workspace @my/schema",
     "api": "yarn workspace @my/api",
     "landing": "yarn workspace @my/landing",
+    "web": "yarn workspace @my/web",
     "postinstall": "npm run build"
   },
   "devDependencies": {
