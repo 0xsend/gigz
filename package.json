@@ -22,6 +22,7 @@
     "bindings": "yarn workspace @my/bindings",
     "schema": "yarn workspace @my/schema",
     "api": "yarn workspace @my/api",
+    "landing": "yarn workspace @my/landing",
     "postinstall": "npm run build"
   },
   "devDependencies": {

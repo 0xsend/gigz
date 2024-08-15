@@ -25,7 +25,8 @@
     "@my/schema",
     "@my/api",
     "@my/bindings",
-    "@my/sendpay-example"
+    "@my/sendpay-example",
+    "@my/landing"
   ],
   "bs-dependencies": [
     "resgraph",
@@ -35,7 +36,8 @@
     "@my/schema",
     "@my/bindings",
     "@my/sendpay-example",
-    "@my/api"
+    "@my/api",
+    "@my/landing"
   ],
   "bsc-flags": [
     "-open RescriptCore",
