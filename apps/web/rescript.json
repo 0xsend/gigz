@@ -1,6 +1,6 @@
 {
-  "name": "@my/sendpay-example",
-  "namespace": "SendPayExample",
+  "name": "@my/web",
+  "namespace": "Web",
   "sources": {
     "dir": "src",
     "subdirs": true
