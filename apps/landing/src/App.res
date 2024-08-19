@@ -2,7 +2,7 @@ module Card = {
   @react.component
   let make = (~children) => {
     <div
-      className="w-full md:max-w-[480px] bg-color12/10 md:my-auto h-[100svh] backdrop-blur-[56px] rounded-lg  p-6 flex flex-col justify-between ">
+      className="w-full md:max-w-[480px] bg-color12/10 md:my-auto h-[100svh] backdrop-blur-[56px] rounded-2xl p-10 flex flex-col justify-between ">
       {children}
     </div>
   }
