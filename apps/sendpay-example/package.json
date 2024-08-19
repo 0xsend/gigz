@@ -18,7 +18,7 @@
     "rescript:dev": "rewatch watch",
     "dev:server": "node --env-file=../../.env.local ./api/graphql.mjs",
     "dev:schema": "npx -y get-graphql-schema http://localhost:9000/api/graphql > schema.graphql",
-    "setup": "npm run rescript:build && npm run build:relay && npm run router:generate",
+    "setup": "npm run build:relay && npm run router:generate",
     "postinstall": "npm run setup"
   },
   "devDependencies": {
