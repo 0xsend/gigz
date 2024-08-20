@@ -8,7 +8,7 @@ let url = {
   | Some(Production) => `https://${projectProductionUrl}/api/graphql`
   | Some(Development) => `http://localhost:3000/api/graphql`
   | None => `http://localhost:${port}/api/graphql`
-  | Some(Preview) => `https://${url}/api/graphql`
+  | Some(Preview) => `https://${projectBranchUrl}/api/graphql`
   }
 }
 
