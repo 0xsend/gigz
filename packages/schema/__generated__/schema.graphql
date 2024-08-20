@@ -8,14 +8,30 @@ enum Chain {
   BaseSepolia
 }
 
+enum ListingType {
+  Gig
+  Offer
+}
+
 enum LookupType {
   tag
   sendid
 }
 
+enum Token {
+  USDC
+  ETH
+  SEND
+}
+
 union ConsumeSessionResult = 
   | ConsumeSessionResultOk
   | ConsumeSessionResultError
+
+
+union MakeListingResult = 
+  | MakeListingResultOk
+  | MakeListingResultError
 
 
 union MakeSessionResult = 
@@ -74,6 +90,42 @@ input MakeSessionInputByTag {
   duration: Float
 }
 
+input FeeInput {
+  amount: BigInt!
+  token: Token!
+}
+
+input MakeListing {
+
+  """The sendid to request a session for"""
+  sendid: Float!
+
+  """The title of the listing"""
+  title: String!
+
+  """The description of the listing"""
+  description: String
+
+  """The chain id to use for the session"""
+  contactLinks: [String!]!
+
+  """The chain id to use for the session"""
+  imageLinks: [String!]
+
+  """The fees for the listing"""
+  fees: [FeeInput!]!
+
+  """The tags for the listing"""
+  tags: [TagInput!]
+
+  """The fees to contact the lister"""
+  contactFees: [FeeInput!]!
+}
+
+input TagInput {
+  name: String!
+}
+
 input TodoAddInput {
   text: String!
   completed: Boolean!
@@ -93,6 +145,11 @@ input TodoUpdateInput {
   text: String
 }
 
+input MakeListingByType @oneOf {
+  offer: MakeListing
+  gig: MakeListing
+}
+
 input MakeSessionInput @oneOf {
   bySendId: MakeSessionInputBySendId
   byTag: MakeSessionInputByTag
@@ -104,7 +161,6 @@ interface Node {
 
   """The id of the object."""
   id: ID!
-  id: String!
 }
 
 type ConsumeSessionResultError {
@@ -120,6 +176,15 @@ type ConsumeSessionResultOk {
   about: String
   refcode: String
   chainId: Int
+}
+
+type MakeListingResultError {
+  name: String!
+  reason: String!
+}
+
+type MakeListingResultOk {
+  newListing: Listing!
 }
 
 type MakeSessionResultError {
@@ -159,6 +224,51 @@ type TodoUpdateResultOk {
   updatedTodo: Todo!
 }
 
+type Fee implements Node {
+  amount: BigInt!
+  token: Token!
+
+  """The id of the object."""
+  id: ID!
+}
+
+
+"""A single listing item."""
+type Listing implements Node {
+  title: String!
+  description: String
+  imageLinks: [String!]
+  contactLinks: [String!]!
+  contactFees: [Fee!]!
+  fees: [Fee!]!
+  tags: [Tag!]!
+
+  """The id of the object."""
+  id: ID!
+}
+
+
+"""A connection to a todo."""
+type ListingConnection {
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ListingEdge]
+}
+
+
+"""An edge to a todo."""
+type ListingEdge {
+
+  """The item at the end of the edge."""
+  node: Listing
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
 type Mutation {
 
   """Add a new Todo item."""
@@ -171,6 +281,7 @@ type Mutation {
   todoUpdate(input: TodoUpdateInput!): TodoUpdateResult!
   consumeSendpaySession: ConsumeSessionResult!
   makeSendpaySession(input: MakeSessionInput!): MakeSessionResult!
+  makeListing(input: MakeListingByType!): MakeListingResult!
 }
 
 
@@ -208,16 +319,25 @@ type Query {
   node(id: ID!): Node
 }
 
+type Tag implements Node {
+  name: String!
+
+  """The id of the object."""
+  id: ID!
+}
+
 
 """A single todo item."""
 type Todo implements Node {
-  id: String!
 
   """The text of the todo item."""
   text: String!
 
   """Whether the todo is completed or not."""
   completed: Boolean!
+
+  """The id of the object."""
+  id: ID!
 }
 
 
@@ -243,7 +363,9 @@ type TodoEdge {
 }
 
 type User implements Node {
-  id: String!
   name: String!
+
+  """The id of the object."""
+  id: ID!
 }
 

@@ -192,10 +192,6 @@ return {
         "selections": [
           (v2/*: any*/),
           {
-            "kind": "TypeDiscriminator",
-            "abstractKey": "__isNode"
-          },
-          {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
@@ -243,12 +239,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fa7db7a12ac463e256276a79e3ffc361",
+    "cacheID": "a1233c3f0513b347d13cb5bf975c618c",
     "id": null,
     "metadata": {},
     "name": "SingleTodoQuery",
     "operationKind": "query",
-    "text": "query SingleTodoQuery(\n  $id: ID!\n  $showMore: Boolean!\n) {\n  node(id: $id) {\n    __typename\n    ... on Todo {\n      ...SingleTodoDisplay_todo_493yoA\n    }\n    __isNode: __typename\n    id\n  }\n}\n\nfragment SingleTodoDisplay_todo_493yoA on Todo {\n  id\n  text\n  completed\n  isShowingMore: id @include(if: $showMore)\n}\n"
+    "text": "query SingleTodoQuery(\n  $id: ID!\n  $showMore: Boolean!\n) {\n  node(id: $id) {\n    __typename\n    ... on Todo {\n      ...SingleTodoDisplay_todo_493yoA\n    }\n    id\n  }\n}\n\nfragment SingleTodoDisplay_todo_493yoA on Todo {\n  id\n  text\n  completed\n  isShowingMore: id @include(if: $showMore)\n}\n"
   }
 };
 })() `)

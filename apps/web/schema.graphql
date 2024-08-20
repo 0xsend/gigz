@@ -35,6 +35,75 @@ type ConsumeSessionResultOk {
   sendtag: String
 }
 
+type Fee implements Node {
+  amount: BigInt!
+
+  """The id of the object."""
+  id: ID!
+  token: Token!
+}
+
+input FeeInput {
+  amount: BigInt!
+  token: Token!
+}
+
+"""A single listing item."""
+type Listing implements Node {
+  contactFees: [Fee!]!
+  contactLinks: [String!]!
+  description: String
+  fees: [Fee!]!
+
+  """The id of the object."""
+  id: ID!
+  imageLinks: [String!]
+  tags: [Tag!]!
+  title: String!
+}
+
+input MakeListing {
+  """The fees to contact the lister"""
+  contactFees: [FeeInput!]!
+
+  """The chain id to use for the session"""
+  contactLinks: [String!]!
+
+  """The description of the listing"""
+  description: String
+
+  """The fees for the listing"""
+  fees: [FeeInput!]!
+
+  """The chain id to use for the session"""
+  imageLinks: [String!]
+
+  """The sendid to request a session for"""
+  sendid: Float!
+
+  """The tags for the listing"""
+  tags: [TagInput!]
+
+  """The title of the listing"""
+  title: String!
+}
+
+input MakeListingByType {
+  gig: MakeListing
+  offer: MakeListing
+}
+
+union MakeListingResult = MakeListingResultError | MakeListingResultOk
+
+type MakeListingResultError {
+  name: String!
+  reason: String!
+}
+
+type MakeListingResultOk {
+  newListing: Listing!
+}
+
 input MakeSessionInput {
   bySendId: MakeSessionInputBySendId
   byTag: MakeSessionInputByTag
@@ -87,6 +156,7 @@ type MakeSessionResultOk {
 
 type Mutation {
   consumeSendpaySession: ConsumeSessionResult!
+  makeListing(input: MakeListingByType!): MakeListingResult!
   makeSendpaySession(input: MakeSessionInput!): MakeSessionResult!
 
   """Add a new Todo item."""
@@ -101,7 +171,8 @@ type Mutation {
 
 """An object with an ID."""
 interface Node {
-  id: String!
+  """The id of the object."""
+  id: ID!
 }
 
 """Information about pagination in a connection."""
@@ -136,11 +207,23 @@ type Query {
   nodes(ids: [ID!]!): [Node]!
 }
 
+type Tag implements Node {
+  """The id of the object."""
+  id: ID!
+  name: String!
+}
+
+input TagInput {
+  name: String!
+}
+
 """A single todo item."""
 type Todo implements Node {
   """Whether the todo is completed or not."""
   completed: Boolean!
-  id: String!
+
+  """The id of the object."""
+  id: ID!
 
   """The text of the todo item."""
   text: String!
@@ -213,8 +296,15 @@ type TodoUpdateResultOk {
   updatedTodo: Todo!
 }
 
+enum Token {
+  USDC
+  ETH
+  SEND
+}
+
 type User implements Node {
-  id: String!
+  """The id of the object."""
+  id: ID!
   name: String!
 }
 

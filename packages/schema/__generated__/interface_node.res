@@ -3,14 +3,23 @@
 @@warning("-27-34-37")
 
 module Resolver = {
-  @gql.interfaceResolver("node") type t = Todo(Todo.todo) | User(User.user)
+  @gql.interfaceResolver("node")
+  type t =
+    | Fee(Listing.fee)
+    | Listing(Listing.listing)
+    | Tag(Listing.tag)
+    | Todo(Todo.todo)
+    | User(User.user)
 }
 
 module ImplementedBy = {
-  type t = Todo | User
+  type t = Fee | Listing | Tag | Todo | User
 
   let decode = (str: string) =>
     switch str {
+    | "Fee" => Some(Fee)
+    | "Listing" => Some(Listing)
+    | "Tag" => Some(Tag)
     | "Todo" => Some(Todo)
     | "User" => Some(User)
     | _ => None
@@ -20,6 +29,9 @@ module ImplementedBy = {
 }
 
 type typeMap<'a> = {
+  @as("Fee") fee: 'a,
+  @as("Listing") listing: 'a,
+  @as("Tag") tag: 'a,
   @as("Todo") todo: 'a,
   @as("User") user: 'a,
 }

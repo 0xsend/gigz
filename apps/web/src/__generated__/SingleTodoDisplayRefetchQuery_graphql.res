@@ -178,10 +178,6 @@ return {
         "selections": [
           (v3/*: any*/),
           {
-            "kind": "TypeDiscriminator",
-            "abstractKey": "__isNode"
-          },
-          {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
@@ -229,12 +225,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "35811e29d8e0a285d58834b69fbda2b0",
+    "cacheID": "fc1b19b7d53d3afe46d930beac620df9",
     "id": null,
     "metadata": {},
     "name": "SingleTodoDisplayRefetchQuery",
     "operationKind": "query",
-    "text": "query SingleTodoDisplayRefetchQuery(\n  $showMore: Boolean = false\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...SingleTodoDisplay_todo_493yoA\n    __isNode: __typename\n    id\n  }\n}\n\nfragment SingleTodoDisplay_todo_493yoA on Todo {\n  id\n  text\n  completed\n  isShowingMore: id @include(if: $showMore)\n}\n"
+    "text": "query SingleTodoDisplayRefetchQuery(\n  $showMore: Boolean = false\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...SingleTodoDisplay_todo_493yoA\n    id\n  }\n}\n\nfragment SingleTodoDisplay_todo_493yoA on Todo {\n  id\n  text\n  completed\n  isShowingMore: id @include(if: $showMore)\n}\n"
   }
 };
 })() `)
