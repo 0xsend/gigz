@@ -16,10 +16,14 @@ let default = createYoga({
     open ResGraphContext
     {
       sendpayKey: request->Request.headers->Headers.get("x-sendpay-key")->Option.getOr(""),
-      dataLoaders: DataLoaders.make(),
+      dataLoaders: DataLoaders.make(~edgedbClient),
       edgedbClient,
       viemClient,
-    }
+    },
+     plugins: [
+    Envelope.Plugin.ExtendedValidation.use({
+      rules: [Envelope.Plugin.ExtendedValidation.Rule.oneOfInputObjectsRule],
+    }),
   },
 })
 
@@ -31,7 +35,7 @@ if Vercel.env->Option.isNone {
       open ResGraphContext
       {
         sendpayKey: request->Request.headers->Headers.get("x-sendpay-key")->Option.getOr(""),
-        dataLoaders: DataLoaders.make(),
+        dataLoaders: DataLoaders.make(~edgedbClient),
         edgedbClient,
         viemClient,
       }

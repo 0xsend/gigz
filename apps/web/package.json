@@ -12,9 +12,9 @@
     "preview": "cross-env ENABLE_FILESERVER=true yarn start",
     "router:generate": "rescript-relay-router generate",
     "dev": "concurrently 'npm:dev:*'",
-    "dev:relay": "rescript-relay-compiler --watch",
     "dev:vite": "vite",
-    "dev:server": "node --env-file=../../.env.local ./api/graphql.mjs",
+    "dev:server": "node --env-file=../../.env.local --watch ./api/graphql.mjs -",
+    "dev:relay": "rescript-relay-compiler --watch",
     "dev:schema": "npx -y get-graphql-schema http://localhost:9000/api/graphql > schema.graphql",
     "setup": "npm run build:relay && npm run router:generate",
     "postinstall": "npm run setup"
@@ -39,6 +39,7 @@
     "vite-plugin-vercel": "^8.0.0"
   },
   "dependencies": {
+    "@envelop/extended-validation": "2",
     "@my/bindings": "*",
     "@my/schema": "*",
     "comlink": "^4.4.1",

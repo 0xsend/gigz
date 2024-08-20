@@ -17,6 +17,21 @@ type enum_Chain_input =
 
 
 @live @unboxed
+type enum_Token = 
+  | USDC
+  | ETH
+  | SEND
+  | FutureAddedValue(string)
+
+
+@live @unboxed
+type enum_Token_input = 
+  | USDC
+  | ETH
+  | SEND
+
+
+@live @unboxed
 type enum_RequiredFieldAction = 
   | NONE
   | LOG
@@ -45,7 +60,55 @@ type enum_CatchFieldTo_input =
 
 
 @live
-type rec input_MakeSessionInput = {
+type rec input_FeeInput = {
+  amount: Schema.BigInt.t,
+  token: enum_Token_input,
+}
+
+@live
+and input_FeeInput_nullable = {
+  amount: Schema.BigInt.t,
+  token: enum_Token_input,
+}
+
+@live
+and input_MakeListing = {
+  contactFees: array<input_FeeInput>,
+  contactLinks: array<string>,
+  description?: string,
+  fees: array<input_FeeInput>,
+  imageLinks?: array<string>,
+  sendid: float,
+  tags?: array<input_TagInput>,
+  title: string,
+}
+
+@live
+and input_MakeListing_nullable = {
+  contactFees: array<input_FeeInput_nullable>,
+  contactLinks: array<string>,
+  description?: Js.Null.t<string>,
+  fees: array<input_FeeInput_nullable>,
+  imageLinks?: Js.Null.t<array<string>>,
+  sendid: float,
+  tags?: Js.Null.t<array<input_TagInput_nullable>>,
+  title: string,
+}
+
+@live
+and input_MakeListingByType = {
+  gig?: input_MakeListing,
+  offer?: input_MakeListing,
+}
+
+@live
+and input_MakeListingByType_nullable = {
+  gig?: Js.Null.t<input_MakeListing_nullable>,
+  offer?: Js.Null.t<input_MakeListing_nullable>,
+}
+
+@live
+and input_MakeSessionInput = {
   bySendId?: input_MakeSessionInputBySendId,
   byTag?: input_MakeSessionInputByTag,
 }
@@ -90,6 +153,16 @@ and input_MakeSessionInputByTag_nullable = {
   confirmationAmount?: Js.Null.t<Schema.BigInt.t>,
   duration?: Js.Null.t<float>,
   tag: string,
+}
+
+@live
+and input_TagInput = {
+  name: string,
+}
+
+@live
+and input_TagInput_nullable = {
+  name: string,
 }
 
 @live

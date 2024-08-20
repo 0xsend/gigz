@@ -22,7 +22,7 @@ var $$default = GraphqlYoga.createYoga({
       context: (async function (param) {
           return {
                   sendpayKey: Core__Option.getOr(Caml_option.nullable_to_opt(param.request.headers.get("x-sendpay-key")), ""),
-                  dataLoaders: DataLoaders.make(),
+                  dataLoaders: DataLoaders.make(edgedbClient),
                   edgedbClient: edgedbClient,
                   viemClient: viemClient
                 };
@@ -36,7 +36,7 @@ if (Core__Option.isNone(process.env.VERCEL_ENV)) {
         context: (async function (param) {
             return {
                     sendpayKey: Core__Option.getOr(Caml_option.nullable_to_opt(param.request.headers.get("x-sendpay-key")), ""),
-                    dataLoaders: DataLoaders.make(),
+                    dataLoaders: DataLoaders.make(edgedbClient),
                     edgedbClient: edgedbClient,
                     viemClient: viemClient
                   };

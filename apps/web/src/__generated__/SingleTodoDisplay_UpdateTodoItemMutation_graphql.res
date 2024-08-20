@@ -124,29 +124,11 @@ v2 = {
   "storageKey": null
 },
 v3 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "Todo",
-      "kind": "LinkedField",
-      "name": "updatedTodo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "completed",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "type": "TodoUpdateResultOk",
-  "abstractKey": null
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "completed",
+  "storageKey": null
 },
 v4 = {
   "kind": "InlineFragment",
@@ -178,7 +160,25 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
-          (v3/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Todo",
+                "kind": "LinkedField",
+                "name": "updatedTodo",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "type": "TodoUpdateResultOk",
+            "abstractKey": null
+          },
           (v4/*: any*/)
         ],
         "storageKey": null
@@ -206,7 +206,32 @@ return {
             "kind": "TypeDiscriminator",
             "abstractKey": "__isTodoUpdateResult"
           },
-          (v3/*: any*/),
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Todo",
+                "kind": "LinkedField",
+                "name": "updatedTodo",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "type": "TodoUpdateResultOk",
+            "abstractKey": null
+          },
           (v4/*: any*/)
         ],
         "storageKey": null
@@ -214,12 +239,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e3608fe0c3545e53390b15f700030059",
+    "cacheID": "672c36be0e9f4e69f53353766024b5cc",
     "id": null,
     "metadata": {},
     "name": "SingleTodoDisplay_UpdateTodoItemMutation",
     "operationKind": "mutation",
-    "text": "mutation SingleTodoDisplay_UpdateTodoItemMutation(\n  $input: TodoUpdateInput!\n) {\n  todoUpdate(input: $input) {\n    __typename\n    __isTodoUpdateResult: __typename\n    ... on TodoUpdateResultOk {\n      updatedTodo {\n        completed\n      }\n    }\n    ... on TodoUpdateResultError {\n      message\n    }\n  }\n}\n"
+    "text": "mutation SingleTodoDisplay_UpdateTodoItemMutation(\n  $input: TodoUpdateInput!\n) {\n  todoUpdate(input: $input) {\n    __typename\n    __isTodoUpdateResult: __typename\n    ... on TodoUpdateResultOk {\n      updatedTodo {\n        completed\n        id\n      }\n    }\n    ... on TodoUpdateResultError {\n      message\n    }\n  }\n}\n"
   }
 };
 })() `)
