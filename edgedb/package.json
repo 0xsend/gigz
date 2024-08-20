@@ -5,7 +5,13 @@
     "node": ">=20"
   },
   "type": "module",
-  "dependencies": {
+  "scripts": {
+    "ui": "npx edgedb ui",
+    "migration:create": "npx edgedb migration create",
+    "migration:extract": "npx edgedb migration extract",
+    "migrate": "npx edgedb migrate"
+  },
+  "devDependencies": {
     "edgedb": "^1.5.9"
   },
   "packageManager": "yarn@4.3.1"

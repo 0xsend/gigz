@@ -6,13 +6,12 @@
   },
   "type": "module",
   "scripts": {
-    "build": "npm run build:edgedb && npm run build:resgraph && npm run build:rescript",
+    "build": "npm run build:edgedb && npm run build:resgraph && rewatch build",
     "build:edgedb": "rescript-edgedb generate --output ./edgedb/__generated__ --src .",
     "build:resgraph": "resgraph build",
-    "build:rescript": "rewatch build",
     "dev": "concurrently 'npm:dev:*'",
     "dev:resgraph": "resgraph watch",
-    "dev:rescript": "rewatch watch ."
+    "dev:edgedb": "rescript-edgedb generate --output ./edgedb/__generated__ --src . --watch"
   },
   "devDependencies": {
     "@rescript/core": "1.5.2",

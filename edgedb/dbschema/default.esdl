@@ -1,30 +1,33 @@
 module default {
-  required global admins: array<str>{
-    default := ["ethen", "vic", "boss"];
-  };
+  scalar type ListingCategory extending enum<GraphicDesign, MotionDesign, ThreeDArt, PhotoVideo, WebDesign>;
+  scalar type ListingType extending enum<Gig, Offer>;
+  scalar type Token extending enum<USDC, ETH, SEND>;
 
-  scalar type GigType extending enum<GraphicDesigners, MotionDesigners, Artists, Animators, VideoEditors>;
+  type Fee {
+    required amount -> bigint {
+      constraint min_value(1n);
+    }
+    required token -> Token;
+  }
 
-  #@todo: make GigRequest.sendid same int as send backend. probably int64
-  type Gig {
-    required creator -> array<str> {
-      annotation description := "sendpay key representing device or agent that created the gig";
+  type Tag {
+    required name -> str;
+  }
+
+  type Listing {
+    required sendid -> int64 {
       readonly := true;
     };
-    required sendid -> str {
-      readonly := true;
-    };
-    required sendtag -> str {
-      readonly := true;
-    };
+    required listing_type -> ListingType;
     required title -> str;
     description -> str;
-    links -> array<str>;
+    required multi fees -> Fee ; # TODO: should be constrained to be unique and max of 3
+    multi contact_fees -> Fee; # TODO: should be constrained to be unique and max of 3
+    image_links -> array<str>;
     required contact_links -> array<str>;
-    required is_admin_approved -> bool{
-      default := false;
-    };
-    required gigType: GigType;
-    index on ((.sendtag, .is_admin_approved));
-  };
+
+    multi tags: Tag;
+
+    index on ((.sendid, .listing_type));
+  }
 }
