@@ -14,8 +14,10 @@
   "scripts": {
     "build": "rewatch build",
     "build:rescript": "rescript build -with-deps",
-    "watch": "rewatch watch .",
-    "watch:rescript": "rescript watch -with-deps",
+    "dev": "concurrently 'npm:dev:*'",
+    "dev:rescript": "rewatch watch",
+    "dev:web": "yarn workspace @my/web dev",
+    "dev:schema": "yarn workspace @my/schema dev",
     "clean": "rewatch clean .",
     "clean:rescript": "rescript clean",
     "sendpay-example": "yarn workspace @my/sendpay-example",
@@ -24,11 +26,13 @@
     "api": "yarn workspace @my/api",
     "landing": "yarn workspace @my/landing",
     "web": "yarn workspace @my/web",
+    "edgedb": "yarn workspace @my/edgedb",
     "postinstall": "npm run build"
   },
   "devDependencies": {
     "@rescript/core": "1.5.2",
     "@rolandpeelen/rewatch": "^1.0.8",
+    "concurrently": "^8.2.2",
     "rescript": "^11.1.3",
     "rescript-edgedb": "^0.7.0"
   },
