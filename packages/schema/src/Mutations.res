@@ -52,7 +52,7 @@ type makeListing = {
   /** The tags for the listing */
   tags?: array<tagInput>,
   /** The fees to contact the lister */
-  contactFees: array<FeeInput.feeInput>,
+  contactFees?: array<FeeInput.feeInput>,
 }
 
 @gql.inputUnion

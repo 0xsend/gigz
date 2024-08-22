@@ -57,18 +57,20 @@ type listing = {
   @gql.field
   contactLinks: array<string>,
   @gql.field
-  contactFees: array<fee>,
+  contactFees?: array<fee>,
   @gql.field
   fees: array<fee>,
   @gql.field
   tags: array<tag>,
+  @gql.field
+  createdAt: float,
 }
 
-/** An edge to a todo. */
+/** An edge to a listing. */
 @gql.type
 type listingEdge = {...ResGraph.Connections.edge<listing>}
 
-/** A connection to a todo. */
+/** A connection to a listing. */
 @gql.type
 type listingConnection = {...ResGraph.Connections.connection<listingEdge>}
 
@@ -121,5 +123,6 @@ let castToResgraph = (listing: Listing__edgeql.One.response): listing => {
       ({id, amount, token: Token.castFromDb(token)} :> fee)
     ),
     tags: (listing.tags :> array<tag>),
+    createdAt: listing.created_at->Date.getTime,
   }
 }
