@@ -25,6 +25,10 @@ module default {
     multi contact_fees -> Fee; # TODO: should be constrained to be unique and max of 3
     image_links -> array<str>;
     required contact_links -> array<str>;
+    required created_at -> datetime {
+      default := datetime_current();
+      readonly := true;
+    };
 
     multi tags: Tag;
 
