@@ -319,6 +319,12 @@ type Query {
   """Fetches an object given its ID."""
   node(id: ID!): Node
 
+  """All gigs in chronological order"""
+  gigs(first: Int, after: String, before: String, last: Int): ListingConnection!
+
+  """All offers in chronological order"""
+  offers(first: Int, after: String, before: String, last: Int): ListingConnection!
+
   """All listings in chronological order"""
   listings(first: Int, after: String, before: String, last: Int): ListingConnection!
 }
