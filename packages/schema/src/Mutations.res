@@ -96,7 +96,9 @@ let makeListing = async (
     | data => Null.Value(data)
     },
     contactFeeData: switch input.contactFees
-    ->Array.map(fee => {"amount": fee.amount, "token": Token.castToDb(fee.token)})
+    ->Option.map(fees =>
+      fees->Array.map(fee => {"amount": fee.amount, "token": Token.castToDb(fee.token)})
+    )
     ->JSON.stringifyAny
     ->Option.getOr("[]")
     ->JSON.parseExn {

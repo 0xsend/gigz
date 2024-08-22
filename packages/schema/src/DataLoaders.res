@@ -4,8 +4,8 @@ type t = {
   listing: ListingDataLoaders.t,
 }
 
-let make = (~edgedbClient) => {
+let make = () => {
   user: UserDataLoaders.make(),
   todo: TodoDataLoaders.make(),
-  listing: ListingDataLoaders.make(~edgedbClient),
+  listing: ListingDataLoaders.make(),
 }

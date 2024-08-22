@@ -58,13 +58,9 @@ let node = async (_: Schema.query, ~id, ~ctx: ResGraphContext.context): option<
       | Some(todo) => Some(Todo(todo))
       }
     | Listing =>
-      switch await ctx.dataLoaders.listing.byId->DataLoader.load(id) {
-      | None =>
-        None
-      | Some(listing) =>
-
-
-        Some(Listing(listing))
+      switch await ctx.dataLoaders.listing.byId->DataLoader.load((ctx.edgedbClient, id)) {
+      | None => None
+      | Some(listing) => Some(Listing(listing))
       }
     | Fee | Tag => panic("Not implemented")
     }

@@ -1,11 +1,19 @@
+let countAll = %edgeql(`
+  # @name countAll
+  select count(Listing);
+`)
+
 let all = %edgeql(`
     # @name all
-    select Listing {**};
+    select Listing {**}
+    order by .created_at desc
+    offset <optional int64>$offset
+    limit <optional int64>$limit
 `)
 
 let one = %edgeql(`
   # @name one
-  select Listing {**} filter .id = <uuid>$id;
+  select Listing {**} filter .id = <uuid>$id limit 1;
 `)
 
 let allOffers = %edgeql(`

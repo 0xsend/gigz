@@ -204,7 +204,13 @@ input_MakeListing_conversionInstructions->Array.pushMany([
   (
     "contactFees",
     makeInputObjectFieldConverterFn(v =>
-      v->Array.map(v => v->applyConversionToInputObject(input_FeeInput_conversionInstructions))
+      switch v->Nullable.toOption {
+      | None => None
+      | Some(v) =>
+        v
+        ->Array.map(v => v->applyConversionToInputObject(input_FeeInput_conversionInstructions))
+        ->Some
+      }
     ),
   ),
 ])
@@ -661,9 +667,9 @@ t_Listing.contents = GraphQLObjectType.make({
   fields: () =>
     {
       "contactFees": {
-        typ: GraphQLListType.make(get_Fee()->GraphQLObjectType.toGraphQLType->nonNull)
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
+        typ: GraphQLListType.make(
+          get_Fee()->GraphQLObjectType.toGraphQLType->nonNull,
+        )->GraphQLListType.toGraphQLType,
         description: ?None,
         deprecationReason: ?None,
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
@@ -680,6 +686,15 @@ t_Listing.contents = GraphQLObjectType.make({
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
           src["contactLinks"]
+        }),
+      },
+      "createdAt": {
+        typ: Scalars.float->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["createdAt"]
         }),
       },
       "description": {
@@ -746,7 +761,7 @@ t_Listing.contents = GraphQLObjectType.make({
 })
 t_ListingConnection.contents = GraphQLObjectType.make({
   name: "ListingConnection",
-  description: "A connection to a todo.",
+  description: "A connection to a listing.",
   interfaces: [],
   fields: () =>
     {
@@ -774,7 +789,7 @@ t_ListingConnection.contents = GraphQLObjectType.make({
 })
 t_ListingEdge.contents = GraphQLObjectType.make({
   name: "ListingEdge",
-  description: "An edge to a todo.",
+  description: "An edge to a listing.",
   interfaces: [],
   fields: () =>
     {
@@ -946,6 +961,28 @@ t_Query.contents = GraphQLObjectType.make({
   interfaces: [],
   fields: () =>
     {
+      "allListings": {
+        typ: get_ListingConnection()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: "All listings",
+        deprecationReason: ?None,
+        args: {
+          "after": {typ: Scalars.string->Scalars.toGraphQLType},
+          "before": {typ: Scalars.string->Scalars.toGraphQLType},
+          "first": {typ: Scalars.int->Scalars.toGraphQLType},
+          "last": {typ: Scalars.int->Scalars.toGraphQLType},
+        }->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          ListingResolvers.allListings(
+            src,
+            ~after=args["after"]->Nullable.toOption,
+            ~before=args["before"]->Nullable.toOption,
+            ~ctx,
+            ~first=args["first"]->Nullable.toOption,
+            ~last=args["last"]->Nullable.toOption,
+          )
+        }),
+      },
       "currentTime": {
         typ: Scalars.float->Scalars.toGraphQLType,
         description: "The current time on the server, as a timestamp.",
@@ -1250,9 +1287,7 @@ input_MakeListing.contents = GraphQLInputObjectType.make({
       "contactFees": {
         GraphQLInputObjectType.typ: GraphQLListType.make(
           get_FeeInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
-        )
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
+        )->GraphQLListType.toGraphQLType,
         description: "The fees to contact the lister",
         deprecationReason: ?None,
       },
@@ -1429,4 +1464,53 @@ union_TodoUpdateResult.contents = GraphQLUnionType.make({
   resolveType: GraphQLUnionType.makeResolveUnionTypeFn(union_TodoUpdateResult_resolveType),
 })
 
-let schema = GraphQLSchemaType.make({"query": get_Query(), "mutation": get_Mutation()})
+let schema = GraphQLSchemaType.make({
+  "query": get_Query(),
+  "mutation": get_Mutation(),
+  "types": [
+    get_Fee()->GraphQLObjectType.toGraphQLType,
+    get_TodoDeleteResultError()->GraphQLObjectType.toGraphQLType,
+    get_ListingConnection()->GraphQLObjectType.toGraphQLType,
+    get_Query()->GraphQLObjectType.toGraphQLType,
+    get_TodoAddResultError()->GraphQLObjectType.toGraphQLType,
+    get_ConsumeSessionResultOk()->GraphQLObjectType.toGraphQLType,
+    get_TodoUpdateResultOk()->GraphQLObjectType.toGraphQLType,
+    get_TodoEdge()->GraphQLObjectType.toGraphQLType,
+    get_TodoDeleteResultOk()->GraphQLObjectType.toGraphQLType,
+    get_MakeSessionResultOk()->GraphQLObjectType.toGraphQLType,
+    get_Todo()->GraphQLObjectType.toGraphQLType,
+    get_MakeSessionResultError()->GraphQLObjectType.toGraphQLType,
+    get_MakeListingResultError()->GraphQLObjectType.toGraphQLType,
+    get_PageInfo()->GraphQLObjectType.toGraphQLType,
+    get_ListingEdge()->GraphQLObjectType.toGraphQLType,
+    get_MakeListingResultOk()->GraphQLObjectType.toGraphQLType,
+    get_User()->GraphQLObjectType.toGraphQLType,
+    get_ConsumeSessionResultError()->GraphQLObjectType.toGraphQLType,
+    get_TodoUpdateResultError()->GraphQLObjectType.toGraphQLType,
+    get_Listing()->GraphQLObjectType.toGraphQLType,
+    get_Tag()->GraphQLObjectType.toGraphQLType,
+    get_TodoAddResultOk()->GraphQLObjectType.toGraphQLType,
+    get_Mutation()->GraphQLObjectType.toGraphQLType,
+    get_TodoConnection()->GraphQLObjectType.toGraphQLType,
+    get_Node()->GraphQLInterfaceType.toGraphQLType,
+    get_TodoUpdateResult()->GraphQLUnionType.toGraphQLType,
+    get_MakeListingResult()->GraphQLUnionType.toGraphQLType,
+    get_ConsumeSessionResult()->GraphQLUnionType.toGraphQLType,
+    get_TodoAddResult()->GraphQLUnionType.toGraphQLType,
+    get_TodoDeleteResult()->GraphQLUnionType.toGraphQLType,
+    get_MakeSessionResult()->GraphQLUnionType.toGraphQLType,
+    get_MakeListingByType()->GraphQLInputObjectType.toGraphQLType,
+    get_MakeSessionInput()->GraphQLInputObjectType.toGraphQLType,
+    get_TagInput()->GraphQLInputObjectType.toGraphQLType,
+    get_TodoUpdateInput()->GraphQLInputObjectType.toGraphQLType,
+    get_FeeInput()->GraphQLInputObjectType.toGraphQLType,
+    get_MakeSessionInputByTag()->GraphQLInputObjectType.toGraphQLType,
+    get_MakeListing()->GraphQLInputObjectType.toGraphQLType,
+    get_TodoAddInput()->GraphQLInputObjectType.toGraphQLType,
+    get_MakeSessionInputBySendId()->GraphQLInputObjectType.toGraphQLType,
+    enum_Token->GraphQLEnumType.toGraphQLType,
+    enum_LookupType->GraphQLEnumType.toGraphQLType,
+    enum_Chain->GraphQLEnumType.toGraphQLType,
+    enum_ListingType->GraphQLEnumType.toGraphQLType,
+  ],
+})

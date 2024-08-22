@@ -16,7 +16,7 @@ let default = createYoga({
     open ResGraphContext
     {
       sendpayKey: request->Request.headers->Headers.get("x-sendpay-key")->Option.getOr(""),
-      dataLoaders: DataLoaders.make(~edgedbClient),
+      dataLoaders: DataLoaders.make(),
       edgedbClient,
       viemClient,
     }
@@ -31,7 +31,7 @@ if Vercel.env->Option.isNone {
       open ResGraphContext
       {
         sendpayKey: request->Request.headers->Headers.get("x-sendpay-key")->Option.getOr(""),
-        dataLoaders: DataLoaders.make(~edgedbClient),
+        dataLoaders: DataLoaders.make(),
         edgedbClient,
         viemClient,
       }
