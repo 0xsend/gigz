@@ -50,8 +50,9 @@ input FeeInput {
 
 """A single listing item."""
 type Listing implements Node {
-  contactFees: [Fee!]!
+  contactFees: [Fee!]
   contactLinks: [String!]!
+  createdAt: Float!
   description: String
   fees: [Fee!]!
 
@@ -62,9 +63,37 @@ type Listing implements Node {
   title: String!
 }
 
+"""A connection to a listing."""
+type ListingConnection {
+  """A list of edges."""
+  edges: [ListingEdge]
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge to a listing."""
+type ListingEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Listing
+}
+
+enum ListingType {
+  Gig
+  Offer
+}
+
+enum LookupType {
+  tag
+  sendid
+}
+
 input MakeListing {
   """The fees to contact the lister"""
-  contactFees: [FeeInput!]!
+  contactFees: [FeeInput!]
 
   """The chain id to use for the session"""
   contactLinks: [String!]!
@@ -191,6 +220,9 @@ type PageInfo {
 }
 
 type Query {
+  """All listings"""
+  allListings(after: String, before: String, first: Int, last: Int): ListingConnection!
+
   """The current time on the server, as a timestamp."""
   currentTime: Float
 

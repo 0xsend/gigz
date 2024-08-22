@@ -2750,6 +2750,7 @@ __metadata:
     json-bigint-patch: "npm:^0.0.8"
     rescript: "npm:^11.1.3"
     rescript-edgedb: "npm:^0.7.0"
+    resgraph: "npm:^0.11.0"
   languageName: unknown
   linkType: soft
 

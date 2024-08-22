@@ -1,19 +1,24 @@
-type t = {byId: DataLoader.t<string, option<Listing.listing>>}
-
-let tap = x => {
-  Console.log(x)
-  x
+type t = {
+  byId: DataLoader.t<(EdgeDB.Client.t, string), option<Listing.listing>>,
+  list: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.All.args), array<Listing.listing>>,
+  totalCount: DataLoader.t<EdgeDB.Client.t, Listing__edgeql.CountAll.response>,
 }
-let make = (~edgedbClient) => {
-  byId: DataLoader.makeSingle(async listingId => {
-    Console.log(listingId)
 
-    (
-      await Listing__edgeql.One.query(edgedbClient, {id: listingId}, ~onError=e => Console.log(e))
-    )->Option.map(Listing.castToResgraph)
-  }),
-  // list: DataLoader.makeSingle(async ({completed, filterText}) => {
-  //   let filteredTodos = await PretendDb.findTodos(~filterText?, ~filterCompleted=?completed)
-  //   filteredTodos->Array.map(todo => (todo :> Todo.todo))
-  // }),
+let make = () => {
+  byId: DataLoader.makeSingle(async ((edgedbClient, id)) =>
+    (await Listing.one(edgedbClient, {id: id}, ~onError=Console.error))->Option.map(
+      Listing.castToResgraph,
+    )
+  ),
+  list: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+    (await Listing.all(edgedbClient, args))->Array.map(listing =>
+      (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
+    )
+  ),
+  totalCount: DataLoader.makeSingle(async edgedbClient =>
+    switch await Listing.countAll(edgedbClient) {
+    | Ok(count) => count
+    | Error(_) => panic("Error counting listings")
+    }
+  ),
 }

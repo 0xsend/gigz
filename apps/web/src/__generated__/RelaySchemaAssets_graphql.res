@@ -17,6 +17,32 @@ type enum_Chain_input =
 
 
 @live @unboxed
+type enum_ListingType = 
+  | Gig
+  | Offer
+  | FutureAddedValue(string)
+
+
+@live @unboxed
+type enum_ListingType_input = 
+  | Gig
+  | Offer
+
+
+@live @unboxed
+type enum_LookupType = 
+  | @as("tag") Tag
+  | @as("sendid") Sendid
+  | FutureAddedValue(string)
+
+
+@live @unboxed
+type enum_LookupType_input = 
+  | @as("tag") Tag
+  | @as("sendid") Sendid
+
+
+@live @unboxed
 type enum_Token = 
   | USDC
   | ETH
@@ -73,7 +99,7 @@ and input_FeeInput_nullable = {
 
 @live
 and input_MakeListing = {
-  contactFees: array<input_FeeInput>,
+  contactFees?: array<input_FeeInput>,
   contactLinks: array<string>,
   description?: string,
   fees: array<input_FeeInput>,
@@ -85,7 +111,7 @@ and input_MakeListing = {
 
 @live
 and input_MakeListing_nullable = {
-  contactFees: array<input_FeeInput_nullable>,
+  contactFees?: Js.Null.t<array<input_FeeInput_nullable>>,
   contactLinks: array<string>,
   description?: Js.Null.t<string>,
   fees: array<input_FeeInput_nullable>,
