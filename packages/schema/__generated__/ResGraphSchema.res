@@ -961,28 +961,6 @@ t_Query.contents = GraphQLObjectType.make({
   interfaces: [],
   fields: () =>
     {
-      "allListings": {
-        typ: get_ListingConnection()->GraphQLObjectType.toGraphQLType->nonNull,
-        description: "All listings",
-        deprecationReason: ?None,
-        args: {
-          "after": {typ: Scalars.string->Scalars.toGraphQLType},
-          "before": {typ: Scalars.string->Scalars.toGraphQLType},
-          "first": {typ: Scalars.int->Scalars.toGraphQLType},
-          "last": {typ: Scalars.int->Scalars.toGraphQLType},
-        }->makeArgs,
-        resolve: makeResolveFn((src, args, ctx, info) => {
-          let src = typeUnwrapper(src)
-          ListingResolvers.allListings(
-            src,
-            ~after=args["after"]->Nullable.toOption,
-            ~before=args["before"]->Nullable.toOption,
-            ~ctx,
-            ~first=args["first"]->Nullable.toOption,
-            ~last=args["last"]->Nullable.toOption,
-          )
-        }),
-      },
       "currentTime": {
         typ: Scalars.float->Scalars.toGraphQLType,
         description: "The current time on the server, as a timestamp.",
@@ -1013,6 +991,28 @@ t_Query.contents = GraphQLObjectType.make({
             ~completed=args["completed"]->Nullable.toOption,
             ~ctx,
             ~filterText=args["filterText"]->Nullable.toOption,
+            ~first=args["first"]->Nullable.toOption,
+            ~last=args["last"]->Nullable.toOption,
+          )
+        }),
+      },
+      "listings": {
+        typ: get_ListingConnection()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: "All listings in chronological order",
+        deprecationReason: ?None,
+        args: {
+          "after": {typ: Scalars.string->Scalars.toGraphQLType},
+          "before": {typ: Scalars.string->Scalars.toGraphQLType},
+          "first": {typ: Scalars.int->Scalars.toGraphQLType},
+          "last": {typ: Scalars.int->Scalars.toGraphQLType},
+        }->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          ListingResolvers.listings(
+            src,
+            ~after=args["after"]->Nullable.toOption,
+            ~before=args["before"]->Nullable.toOption,
+            ~ctx,
             ~first=args["first"]->Nullable.toOption,
             ~last=args["last"]->Nullable.toOption,
           )

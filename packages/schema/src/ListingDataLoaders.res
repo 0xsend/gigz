@@ -1,7 +1,10 @@
 type t = {
   byId: DataLoader.t<(EdgeDB.Client.t, string), option<Listing.listing>>,
-  list: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.All.args), array<Listing.listing>>,
-  totalCount: DataLoader.t<EdgeDB.Client.t, Listing__edgeql.CountAll.response>,
+  many: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.All.args), array<Listing.listing>>,
+  count: DataLoader.t<
+    (EdgeDB.Client.t, Listing__edgeql.Count.args),
+    Listing__edgeql.Count.response,
+  >,
 }
 
 let make = () => {
@@ -10,15 +13,15 @@ let make = () => {
       Listing.castToResgraph,
     )
   ),
-  list: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+  many: DataLoader.makeSingle(async ((edgedbClient, args)) =>
     (await Listing.all(edgedbClient, args))->Array.map(listing =>
       (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
     )
   ),
-  totalCount: DataLoader.makeSingle(async edgedbClient =>
-    switch await Listing.countAll(edgedbClient) {
-    | Ok(count) => count
-    | Error(_) => panic("Error counting listings")
+  count: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+    switch await Listing.count(edgedbClient, args) {
+    | Some(count) => count
+    | None => panic("Error counting listings")
     }
   ),
 }

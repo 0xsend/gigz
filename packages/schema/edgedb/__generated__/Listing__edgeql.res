@@ -1,19 +1,30 @@
-// @sourceHash 3ade231fef5fd0787cf77edf91bc2317
+// @sourceHash 6c5bedd4433564fc38648fb66027b9b8
 
-module CountAll = {
-  let queryText = `# @name countAll
-    select count(Listing);`
-
-  type response = float
+module Count = {
+  let queryText = `# @name count
+    with listingType := <optional ListingType>$listingType,
+      select count(Listing)
+      if exists listingType = false else
+      count(Listing filter .listing_type = ListingType.Gig)
+        if listingType = ListingType.Gig else
+      count(Listing filter .listing_type = ListingType.Offer)
+        if listingType = ListingType.Offer else
+      count({})`
 
   @live
-  let query = (client: EdgeDB.Client.t): promise<result<response, EdgeDB.Error.errorFromOperation>> => {
-    client->EdgeDB.QueryHelpers.singleRequired(queryText)
+  type args = {
+    listingType?: Null.t<[#Gig | #Offer]>,
+  }
+
+  type response = float
+  @live
+  let query = (client: EdgeDB.Client.t, args: args, ~onError=?): promise<option<response>> => {
+    client->EdgeDB.QueryHelpers.single(queryText, ~args, ~onError?)
   }
 
   @live
-  let transaction = (transaction: EdgeDB.Transaction.t): promise<result<response, EdgeDB.Error.errorFromOperation>> => {
-    transaction->EdgeDB.TransactionHelpers.singleRequired(queryText)
+  let transaction = (transaction: EdgeDB.Transaction.t, args: args, ~onError=?): promise<option<response>> => {
+    transaction->EdgeDB.TransactionHelpers.single(queryText, ~args, ~onError?)
   }
 }
 

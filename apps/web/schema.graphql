@@ -220,14 +220,14 @@ type PageInfo {
 }
 
 type Query {
-  """All listings"""
-  allListings(after: String, before: String, first: Int, last: Int): ListingConnection!
-
   """The current time on the server, as a timestamp."""
   currentTime: Float
 
   """List todos."""
   listTodos(after: String, before: String, completed: Boolean, filterText: String, first: Int, last: Int): TodoConnection
+
+  """All listings in chronological order"""
+  listings(after: String, before: String, first: Int, last: Int): ListingConnection!
 
   """The currently logged in user."""
   me: User!

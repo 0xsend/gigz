@@ -1,6 +1,13 @@
-let countAll = %edgeql(`
-  # @name countAll
-  select count(Listing);
+let count = %edgeql(`
+  # @name count
+  with listingType := <optional ListingType>$listingType,
+    select count(Listing)
+    if exists listingType = false else
+    count(Listing filter .listing_type = ListingType.Gig)
+      if listingType = ListingType.Gig else
+    count(Listing filter .listing_type = ListingType.Offer)
+      if listingType = ListingType.Offer else
+    count({})
 `)
 
 let all = %edgeql(`
