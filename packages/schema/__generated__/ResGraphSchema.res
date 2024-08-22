@@ -970,6 +970,28 @@ t_Query.contents = GraphQLObjectType.make({
           Schema.currentTime(src)
         }),
       },
+      "gigs": {
+        typ: get_ListingConnection()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: "All gigs in chronological order",
+        deprecationReason: ?None,
+        args: {
+          "after": {typ: Scalars.string->Scalars.toGraphQLType},
+          "before": {typ: Scalars.string->Scalars.toGraphQLType},
+          "first": {typ: Scalars.int->Scalars.toGraphQLType},
+          "last": {typ: Scalars.int->Scalars.toGraphQLType},
+        }->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          ListingResolvers.gigs(
+            src,
+            ~after=args["after"]->Nullable.toOption,
+            ~before=args["before"]->Nullable.toOption,
+            ~ctx,
+            ~first=args["first"]->Nullable.toOption,
+            ~last=args["last"]->Nullable.toOption,
+          )
+        }),
+      },
       "listTodos": {
         typ: get_TodoConnection()->GraphQLObjectType.toGraphQLType,
         description: "List todos.",
@@ -1053,6 +1075,28 @@ t_Query.contents = GraphQLObjectType.make({
         resolve: makeResolveFn((src, args, ctx, info) => {
           let src = typeUnwrapper(src)
           NodeInterfaceResolver.nodes(src, ~ctx, ~ids=args["ids"])
+        }),
+      },
+      "offers": {
+        typ: get_ListingConnection()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: "All offers in chronological order",
+        deprecationReason: ?None,
+        args: {
+          "after": {typ: Scalars.string->Scalars.toGraphQLType},
+          "before": {typ: Scalars.string->Scalars.toGraphQLType},
+          "first": {typ: Scalars.int->Scalars.toGraphQLType},
+          "last": {typ: Scalars.int->Scalars.toGraphQLType},
+        }->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          ListingResolvers.offers(
+            src,
+            ~after=args["after"]->Nullable.toOption,
+            ~before=args["before"]->Nullable.toOption,
+            ~ctx,
+            ~first=args["first"]->Nullable.toOption,
+            ~last=args["last"]->Nullable.toOption,
+          )
         }),
       },
     }->makeFields,

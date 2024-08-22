@@ -1,4 +1,4 @@
-// @sourceHash 6c5bedd4433564fc38648fb66027b9b8
+// @sourceHash c0b42c42584f3268006cc438a0cad166
 
 module Count = {
   let queryText = `# @name count
@@ -17,6 +17,7 @@ module Count = {
   }
 
   type response = float
+
   @live
   let query = (client: EdgeDB.Client.t, args: args, ~onError=?): promise<option<response>> => {
     client->EdgeDB.QueryHelpers.single(queryText, ~args, ~onError?)
@@ -136,7 +137,17 @@ module One = {
 
 module AllOffers = {
   let queryText = `# @name allOffers
-      select Listing {**} filter .listing_type = ListingType.Offer;`
+      select Listing {**}
+      filter .listing_type = ListingType.Offer
+      order by .created_at desc
+      offset <optional int64>$offset
+      limit <optional int64>$limit`
+
+  @live
+  type args = {
+    offset?: Null.t<float>,
+    limit?: Null.t<float>,
+  }
 
   type response__contact_fees = {
     id: string,
@@ -170,13 +181,69 @@ module AllOffers = {
   }
 
   @live
-  let query = (client: EdgeDB.Client.t): promise<array<response>> => {
-    client->EdgeDB.QueryHelpers.many(queryText)
+  let query = (client: EdgeDB.Client.t, args: args): promise<array<response>> => {
+    client->EdgeDB.QueryHelpers.many(queryText, ~args)
   }
 
   @live
-  let transaction = (transaction: EdgeDB.Transaction.t): promise<array<response>> => {
-    transaction->EdgeDB.TransactionHelpers.many(queryText)
+  let transaction = (transaction: EdgeDB.Transaction.t, args: args): promise<array<response>> => {
+    transaction->EdgeDB.TransactionHelpers.many(queryText, ~args)
+  }
+}
+
+module AllGigs = {
+  let queryText = `# @name allGigs
+      select Listing {**}
+      filter .listing_type = ListingType.Gig
+      order by .created_at desc
+      offset <optional int64>$offset
+      limit <optional int64>$limit`
+
+  @live
+  type args = {
+    offset?: Null.t<float>,
+    limit?: Null.t<float>,
+  }
+
+  type response__contact_fees = {
+    id: string,
+    amount: bigint,
+    token: [#USDC | #ETH | #SEND],
+  }
+
+  type response__fees = {
+    id: string,
+    amount: bigint,
+    token: [#USDC | #ETH | #SEND],
+  }
+
+  type response__tags = {
+    id: string,
+    name: string,
+  }
+
+  type response = {
+    id: string,
+    listing_type: [#Gig | #Offer],
+    sendid: float,
+    contact_links: array<string>,
+    description: Null.t<string>,
+    image_links: Null.t<array<string>>,
+    title: string,
+    created_at: Date.t,
+    contact_fees: array<response__contact_fees>,
+    fees: array<response__fees>,
+    tags: array<response__tags>,
+  }
+
+  @live
+  let query = (client: EdgeDB.Client.t, args: args): promise<array<response>> => {
+    client->EdgeDB.QueryHelpers.many(queryText, ~args)
+  }
+
+  @live
+  let transaction = (transaction: EdgeDB.Transaction.t, args: args): promise<array<response>> => {
+    transaction->EdgeDB.TransactionHelpers.many(queryText, ~args)
   }
 }
 

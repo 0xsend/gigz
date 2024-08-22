@@ -25,7 +25,20 @@ let one = %edgeql(`
 
 let allOffers = %edgeql(`
     # @name allOffers
-    select Listing {**} filter .listing_type = ListingType.Offer;
+    select Listing {**}
+    filter .listing_type = ListingType.Offer
+    order by .created_at desc
+    offset <optional int64>$offset
+    limit <optional int64>$limit
+`)
+
+let allGigs = %edgeql(`
+    # @name allGigs
+    select Listing {**}
+    filter .listing_type = ListingType.Gig
+    order by .created_at desc
+    offset <optional int64>$offset
+    limit <optional int64>$limit
 `)
 
 let offerBySendId = %edgeql(`

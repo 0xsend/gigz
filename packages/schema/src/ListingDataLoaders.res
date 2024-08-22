@@ -1,6 +1,11 @@
 type t = {
   byId: DataLoader.t<(EdgeDB.Client.t, string), option<Listing.listing>>,
   many: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.All.args), array<Listing.listing>>,
+  offers: DataLoader.t<
+    (EdgeDB.Client.t, Listing__edgeql.AllOffers.args),
+    array<Listing.listing>,
+  >,
+  gigs: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.AllGigs.args), array<Listing.listing>>,
   count: DataLoader.t<
     (EdgeDB.Client.t, Listing__edgeql.Count.args),
     Listing__edgeql.Count.response,
@@ -15,6 +20,16 @@ let make = () => {
   ),
   many: DataLoader.makeSingle(async ((edgedbClient, args)) =>
     (await Listing.all(edgedbClient, args))->Array.map(listing =>
+      (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
+    )
+  ),
+  offers: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+    (await Listing.allOffers(edgedbClient, args))->Array.map(listing =>
+      (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
+    )
+  ),
+  gigs: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+    (await Listing.allGigs(edgedbClient, args))->Array.map(listing =>
       (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
     )
   ),
