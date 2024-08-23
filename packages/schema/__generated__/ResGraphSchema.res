@@ -976,19 +976,15 @@ t_Query.contents = GraphQLObjectType.make({
         deprecationReason: ?None,
         args: {
           "after": {typ: Scalars.string->Scalars.toGraphQLType},
-          "before": {typ: Scalars.string->Scalars.toGraphQLType},
           "first": {typ: Scalars.int->Scalars.toGraphQLType},
-          "last": {typ: Scalars.int->Scalars.toGraphQLType},
         }->makeArgs,
         resolve: makeResolveFn((src, args, ctx, info) => {
           let src = typeUnwrapper(src)
           ListingResolvers.gigs(
             src,
             ~after=args["after"]->Nullable.toOption,
-            ~before=args["before"]->Nullable.toOption,
             ~ctx,
             ~first=args["first"]->Nullable.toOption,
-            ~last=args["last"]->Nullable.toOption,
           )
         }),
       },
@@ -1024,19 +1020,15 @@ t_Query.contents = GraphQLObjectType.make({
         deprecationReason: ?None,
         args: {
           "after": {typ: Scalars.string->Scalars.toGraphQLType},
-          "before": {typ: Scalars.string->Scalars.toGraphQLType},
           "first": {typ: Scalars.int->Scalars.toGraphQLType},
-          "last": {typ: Scalars.int->Scalars.toGraphQLType},
         }->makeArgs,
         resolve: makeResolveFn((src, args, ctx, info) => {
           let src = typeUnwrapper(src)
           ListingResolvers.listings(
             src,
             ~after=args["after"]->Nullable.toOption,
-            ~before=args["before"]->Nullable.toOption,
             ~ctx,
             ~first=args["first"]->Nullable.toOption,
-            ~last=args["last"]->Nullable.toOption,
           )
         }),
       },
@@ -1083,19 +1075,15 @@ t_Query.contents = GraphQLObjectType.make({
         deprecationReason: ?None,
         args: {
           "after": {typ: Scalars.string->Scalars.toGraphQLType},
-          "before": {typ: Scalars.string->Scalars.toGraphQLType},
           "first": {typ: Scalars.int->Scalars.toGraphQLType},
-          "last": {typ: Scalars.int->Scalars.toGraphQLType},
         }->makeArgs,
         resolve: makeResolveFn((src, args, ctx, info) => {
           let src = typeUnwrapper(src)
           ListingResolvers.offers(
             src,
             ~after=args["after"]->Nullable.toOption,
-            ~before=args["before"]->Nullable.toOption,
             ~ctx,
             ~first=args["first"]->Nullable.toOption,
-            ~last=args["last"]->Nullable.toOption,
           )
         }),
       },

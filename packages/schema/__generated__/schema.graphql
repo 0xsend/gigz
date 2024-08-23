@@ -320,13 +320,13 @@ type Query {
   node(id: ID!): Node
 
   """All gigs in chronological order"""
-  gigs(first: Int, after: String, before: String, last: Int): ListingConnection!
+  gigs(first: Int, after: String): ListingConnection!
 
   """All offers in chronological order"""
-  offers(first: Int, after: String, before: String, last: Int): ListingConnection!
+  offers(first: Int, after: String): ListingConnection!
 
   """All listings in chronological order"""
-  listings(first: Int, after: String, before: String, last: Int): ListingConnection!
+  listings(first: Int, after: String): ListingConnection!
 }
 
 type Tag implements Node {

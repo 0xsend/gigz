@@ -1,21 +1,15 @@
-let count = %edgeql(`
-  # @name count
-  with listingType := <optional ListingType>$listingType,
-    select count(Listing)
-    if exists listingType = false else
-    count(Listing filter .listing_type = ListingType.Gig)
-      if listingType = ListingType.Gig else
-    count(Listing filter .listing_type = ListingType.Offer)
-      if listingType = ListingType.Offer else
-    count({})
-`)
-
-let all = %edgeql(`
-    # @name all
-    select Listing {**}
-    order by .created_at desc
-    offset <optional int64>$offset
-    limit <optional int64>$limit
+let listings = %edgeql(`
+    # @name listings
+    with
+      selection := (select Listing{**}
+        order by .created_at desc
+        offset <optional int64>$offset
+        limit <optional int64>$limit),
+      select_all := (select Listing)
+    select {
+      listings := selection{**},
+      total_cnt := count(select_all)
+    }
 `)
 
 let one = %edgeql(`
@@ -23,22 +17,34 @@ let one = %edgeql(`
   select Listing {**} filter .id = <uuid>$id limit 1;
 `)
 
-let allOffers = %edgeql(`
-    # @name allOffers
-    select Listing {**}
-    filter .listing_type = ListingType.Offer
-    order by .created_at desc
-    offset <optional int64>$offset
-    limit <optional int64>$limit
+let offers = %edgeql(`
+    # @name offers
+    with
+      selection := (select Listing {**}
+        filter .listing_type = ListingType.Offer
+        order by .created_at desc
+        offset <optional int64>$offset
+        limit <optional int64>$limit),
+      select_all := (select Listing filter .listing_type = ListingType.Offer)
+    select {
+      listings := selection{**},
+      total_cnt := count(select_all)
+    }
 `)
 
-let allGigs = %edgeql(`
-    # @name allGigs
-    select Listing {**}
-    filter .listing_type = ListingType.Gig
-    order by .created_at desc
-    offset <optional int64>$offset
-    limit <optional int64>$limit
+let gigs = %edgeql(`
+    # @name gigs
+    with
+      selection := (select Listing {**}
+        filter .listing_type = ListingType.Gig
+        order by .created_at desc
+        offset <optional int64>$offset
+        limit <optional int64>$limit),
+      select_all := (select Listing filter .listing_type = ListingType.Gig)
+    select {
+      listings := selection{**},
+      total_cnt := count(select_all)
+    }
 `)
 
 let offerBySendId = %edgeql(`

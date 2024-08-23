@@ -7,34 +7,25 @@ let listings = async (
   ~ctx: ResGraphContext.context,
   ~first,
   ~after,
-  ~before,
-  ~last,
 ): listingConnection => {
   open ResGraph.Connections
-  let arrayLength =
-    await ctx.dataLoaders.listing.count->DataLoader.load((ctx.edgedbClient, {}))
-
-  let (args, sliceStart) = switch {first, after, before, last} {
-  | {first: None, after: None, before: None, last: None} => (({}: Listing__edgeql.All.args), 0.)
-  | {first, after, before: None, last: None} => (
-      {
-        limit: ConnectionHelpers.first(~first, ~arrayLength)->Null.fromOption,
-        offset: ConnectionHelpers.after(~after, ~arrayLength)->Null.fromOption,
-      },
-      ConnectionHelpers.after(~after, ~arrayLength)->Option.getOr(0.),
-    )
-  | {first: None, after: None, before, last} =>
-    let last = ConnectionHelpers.last(~last, ~arrayLength)
-    let before = ConnectionHelpers.before(~before, ~last, ~arrayLength)
-    ({limit: Null.make(last), offset: Null.make(before)}, before)
-  | _ => panic("Invalid arguments")
+  let limit = switch first {
+  | None => Null.null
+  | Some(count) if count < 0 => panic("Invalid first or last argument")
+  | Some(count) => Value(float(count))
   }
-  let listings = await ctx.dataLoaders.listing.many->DataLoader.load((ctx.edgedbClient, args))
+  let offset = switch after->Option.map(ConnectionHelpers.cursorToOffset) {
+  | None => Null.null
+  | Some(offset) if offset < 0. || Float.isNaN(offset) => panic("Invalid after argument") // Should be result type or something
+  | Some(offset) => Value(offset)
+  }
+  let {listings, totalCount} =
+    await ctx.dataLoaders.listing.many->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
     listings,
-    ~args={first, after, before, last},
-    ~meta={sliceStart, arrayLength},
+    ~args={first, after, last: None, before: None},
+    ~meta={sliceStart: offset->Null.getOr(0.), arrayLength: totalCount},
   )
 }
 
@@ -45,41 +36,26 @@ let offers = async (
   ~ctx: ResGraphContext.context,
   ~first,
   ~after,
-  ~before,
-  ~last,
 ): listingConnection => {
   open ResGraph.Connections
-  let arrayLength =
-    await ctx.dataLoaders.listing.count->DataLoader.load((
-      ctx.edgedbClient,
-      {listingType: Null.make(#Offer)},
-    ))
-
-  let (args, sliceStart) = switch {first, after, before, last} {
-  | {first: None, after: None, before: None, last: None} => (
-      ({}: Listing__edgeql.AllOffers.args),
-      0.,
-    )
-  | {first, after, before: None, last: None} => (
-      {
-        limit: ConnectionHelpers.first(~first, ~arrayLength)->Null.fromOption,
-        offset: ConnectionHelpers.after(~after, ~arrayLength)->Null.fromOption,
-      },
-      ConnectionHelpers.after(~after, ~arrayLength)->Option.getOr(0.),
-    )
-  | {first: None, after: None, before, last} =>
-    let last = ConnectionHelpers.last(~last, ~arrayLength)
-    let before = ConnectionHelpers.before(~before, ~last, ~arrayLength)
-    ({limit: Null.make(last), offset: Null.make(before)}, before)
-  | _ => panic("Invalid arguments")
+  let limit = switch first {
+  | None => Null.null
+  | Some(count) if count < 0 => panic("Invalid first or last argument")
+  | Some(count) => Value(float(count))
+  }
+  let offset = switch after->Option.map(ConnectionHelpers.cursorToOffset) {
+  | None => Null.null
+  | Some(offset) if offset < 0. || Float.isNaN(offset) => panic("Invalid after argument") // Should be result type or something
+  | Some(offset) => Value(offset)
   }
 
-  let listings = await ctx.dataLoaders.listing.offers->DataLoader.load((ctx.edgedbClient, args))
+  let {listings, totalCount} =
+    await ctx.dataLoaders.listing.offers->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
     listings,
-    ~args={first, after, before, last},
-    ~meta={sliceStart, arrayLength},
+    ~args={first, after, last: None, before: None},
+    ~meta={sliceStart: offset->Null.getOr(0.), arrayLength: totalCount},
   )
 }
 
@@ -90,36 +66,25 @@ let gigs = async (
   ~ctx: ResGraphContext.context,
   ~first,
   ~after,
-  ~before,
-  ~last,
 ): listingConnection => {
   open ResGraph.Connections
-  let arrayLength =
-    await ctx.dataLoaders.listing.count->DataLoader.load((
-      ctx.edgedbClient,
-      {listingType: Null.make(#Gig)},
-    ))
-
-  let (args, sliceStart) = switch {first, after, before, last} {
-  | {first: None, after: None, before: None, last: None} => (({}: Listing__edgeql.AllGigs.args), 0.)
-  | {first, after, before: None, last: None} => (
-      {
-        limit: ConnectionHelpers.first(~first, ~arrayLength)->Null.fromOption,
-        offset: ConnectionHelpers.after(~after, ~arrayLength)->Null.fromOption,
-      },
-      ConnectionHelpers.after(~after, ~arrayLength)->Option.getOr(0.),
-    )
-  | {first: None, after: None, before, last} =>
-    let last = ConnectionHelpers.last(~last, ~arrayLength)
-    let before = ConnectionHelpers.before(~before, ~last, ~arrayLength)
-    ({limit: Null.make(last), offset: Null.make(before)}, before)
-  | _ => panic("Invalid arguments")
+  let limit = switch first {
+  | None => Null.null
+  | Some(count) if count < 0 => panic("Invalid first or last argument")
+  | Some(count) => Value(float(count))
   }
-  let listings = await ctx.dataLoaders.listing.gigs->DataLoader.load((ctx.edgedbClient, args))
+  let offset = switch after->Option.map(ConnectionHelpers.cursorToOffset) {
+  | None => Null.null
+  | Some(offset) if offset < 0. || Float.isNaN(offset) => panic("Invalid after argument") // Should be result type or something
+  | Some(offset) => Value(offset)
+  }
+
+  let {listings, totalCount} =
+    await ctx.dataLoaders.listing.gigs->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
     listings,
-    ~args={first, after, before, last},
-    ~meta={sliceStart, arrayLength},
+    ~args={first, after, last: None, before: None},
+    ~meta={sliceStart: offset->Null.getOr(0.), arrayLength: totalCount},
   )
 }
