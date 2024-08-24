@@ -1,4 +1,4 @@
-// @sourceHash e9b3ccdd671b14f0ad6121073638b0e6
+// @sourceHash 54e722e0b63471afc56634ab5b189740
 
 module Listings = {
   let queryText = `# @name listings
@@ -19,19 +19,13 @@ module Listings = {
     limit?: Null.t<float>,
   }
   
-  type response__listings__contact_fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
+  type response__listings__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
   }
   
-  type response__listings__fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
-  }
-  
-  type response__listings__tags = {
+  type response__listings__skills = {
     name: string,
     id: string,
   }
@@ -40,14 +34,12 @@ module Listings = {
     id: string,
     listing_type: [#Gig | #Offer],
     sendid: float,
-    contact_links: array<string>,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
     title: string,
     created_at: Date.t,
-    contact_fees: array<response__listings__contact_fees>,
-    fees: array<response__listings__fees>,
-    tags: array<response__listings__tags>,
+    pills: response__listings__pills,
+    skills: array<response__listings__skills>,
   }
   
   type response = {
@@ -75,19 +67,13 @@ module One = {
     id: string,
   }
   
-  type response__contact_fees = {
-    id: string,
-    amount: bigint,
-    token: [#USDC | #ETH | #SEND],
+  type response__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
   }
   
-  type response__fees = {
-    id: string,
-    amount: bigint,
-    token: [#USDC | #ETH | #SEND],
-  }
-  
-  type response__tags = {
+  type response__skills = {
     id: string,
     name: string,
   }
@@ -96,14 +82,12 @@ module One = {
     id: string,
     listing_type: [#Gig | #Offer],
     sendid: float,
-    contact_links: array<string>,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
     title: string,
     created_at: Date.t,
-    contact_fees: array<response__contact_fees>,
-    fees: array<response__fees>,
-    tags: array<response__tags>,
+    pills: response__pills,
+    skills: array<response__skills>,
   }
   
   @live
@@ -137,19 +121,13 @@ module Offers = {
     limit?: Null.t<float>,
   }
   
-  type response__listings__contact_fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
+  type response__listings__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
   }
   
-  type response__listings__fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
-  }
-  
-  type response__listings__tags = {
+  type response__listings__skills = {
     name: string,
     id: string,
   }
@@ -158,14 +136,12 @@ module Offers = {
     id: string,
     listing_type: [#Gig | #Offer],
     sendid: float,
-    contact_links: array<string>,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
     title: string,
     created_at: Date.t,
-    contact_fees: array<response__listings__contact_fees>,
-    fees: array<response__listings__fees>,
-    tags: array<response__listings__tags>,
+    pills: response__listings__pills,
+    skills: array<response__listings__skills>,
   }
   
   type response = {
@@ -204,19 +180,13 @@ module Gigs = {
     limit?: Null.t<float>,
   }
   
-  type response__listings__contact_fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
+  type response__listings__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
   }
   
-  type response__listings__fees = {
-    token: [#USDC | #ETH | #SEND],
-    amount: bigint,
-    id: string,
-  }
-  
-  type response__listings__tags = {
+  type response__listings__skills = {
     name: string,
     id: string,
   }
@@ -225,14 +195,12 @@ module Gigs = {
     id: string,
     listing_type: [#Gig | #Offer],
     sendid: float,
-    contact_links: array<string>,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
     title: string,
     created_at: Date.t,
-    contact_fees: array<response__listings__contact_fees>,
-    fees: array<response__listings__fees>,
-    tags: array<response__listings__tags>,
+    pills: response__listings__pills,
+    skills: array<response__listings__skills>,
   }
   
   type response = {
@@ -262,19 +230,13 @@ module OfferBySendId = {
     sendid: float,
   }
   
-  type response__contact_fees = {
-    id: string,
-    amount: bigint,
-    token: [#USDC | #ETH | #SEND],
+  type response__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
   }
   
-  type response__fees = {
-    id: string,
-    amount: bigint,
-    token: [#USDC | #ETH | #SEND],
-  }
-  
-  type response__tags = {
+  type response__skills = {
     id: string,
     name: string,
   }
@@ -283,14 +245,12 @@ module OfferBySendId = {
     id: string,
     listing_type: [#Gig | #Offer],
     sendid: float,
-    contact_links: array<string>,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
     title: string,
     created_at: Date.t,
-    contact_fees: array<response__contact_fees>,
-    fees: array<response__fees>,
-    tags: array<response__tags>,
+    pills: response__pills,
+    skills: array<response__skills>,
   }
   
   @live
