@@ -61,16 +61,17 @@ type listingType = Gig | Offer
 type token = USDC | ETH | SEND
 
 @gql.type
-type fee = {
-  ...NodeInterface.node,
+type pills = {
   @gql.field
-  amount: Schema.BigInt.t,
+  usdc: Schema.BigInt.t,
   @gql.field
-  token: token,
+  eth: Schema.BigInt.t,
+  @gql.field
+  send: Schema.BigInt.t,
 }
 
 @gql.type
-type tag = {
+type skill = {
   ...NodeInterface.node,
   @gql.field
   name: string,
@@ -89,13 +90,9 @@ type listing = {
   @gql.field
   imageLinks?: array<string>,
   @gql.field
-  contactLinks: array<string>,
+  pills: pills,
   @gql.field
-  contactFees?: array<fee>,
-  @gql.field
-  fees: array<fee>,
-  @gql.field
-  tags: array<tag>,
+  skills: array<skill>,
   @gql.field
   createdAt: float,
 }
@@ -136,27 +133,15 @@ module ListingType = {
     }
 }
 
-module Fee = {
-  let castFromDb = (fee: Listing__edgeql.One.response__fees): fee => {
-    {id: fee.id, amount: fee.amount, token: fee.token->Token.castFromDb}
-  }
-}
-
 let castToResgraph = (listing: Listing__edgeql.One.response): listing => {
   {
     id: listing.id,
     listingType: listing.listing_type->ListingType.castFromDb,
     title: listing.title,
-    contactLinks: listing.contact_links,
     description: ?listing.description->Null.toOption,
     imageLinks: ?listing.image_links->Null.toOption,
-    contactFees: listing.contact_fees->Array.map(({id, amount, token}) =>
-      ({id, amount, token: Token.castFromDb(token)} :> fee)
-    ),
-    fees: listing.fees->Array.map(({id, amount, token}) =>
-      ({id, amount, token: Token.castFromDb(token)} :> fee)
-    ),
-    tags: (listing.tags :> array<tag>),
+    pills: (listing.pills :> pills),
+    skills: (listing.skills :> array<skill>),
     createdAt: listing.created_at->Date.getTime,
   }
 }

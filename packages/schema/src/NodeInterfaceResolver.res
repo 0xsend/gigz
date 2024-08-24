@@ -6,8 +6,7 @@ let typeMap: Interface_node.typeMap<int> = {
   user: 1,
   todo: 2,
   listing: 3,
-  fee: 4,
-  tag: 5,
+  skill: 4,
 }
 
 /** A typemap helping us produce compressed node IDs via the map defined above. */
@@ -62,7 +61,7 @@ let node = async (_: Schema.query, ~id, ~ctx: ResGraphContext.context): option<
       | None => None
       | Some(listing) => Some(Listing(listing))
       }
-    | Fee | Tag => panic("Not implemented")
+    | Skill => panic("Not implemented")
     }
   }
 }

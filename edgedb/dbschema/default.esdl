@@ -1,16 +1,8 @@
 module default {
   scalar type ListingCategory extending enum<GraphicDesign, MotionDesign, ThreeDArt, PhotoVideo, WebDesign>;
   scalar type ListingType extending enum<Gig, Offer>;
-  scalar type Token extending enum<USDC, ETH, SEND>;
 
-  type Fee {
-    required amount -> bigint {
-      constraint min_value(1n);
-    }
-    required token -> Token;
-  }
-
-  type Tag {
+  type Skill {
     required name -> str;
   }
 
@@ -18,19 +10,32 @@ module default {
     required sendid -> int64 {
       readonly := true;
     };
-    required listing_type -> ListingType;
-    required title -> str;
-    description -> str;
-    required multi fees -> Fee ; # TODO: should be constrained to be unique and max of 3
-    multi contact_fees -> Fee; # TODO: should be constrained to be unique and max of 3
-    image_links -> array<str>;
-    required contact_links -> array<str>;
-    required created_at -> datetime {
-      default := datetime_current();
+    required listing_type -> ListingType{
       readonly := true;
     };
+    required title -> str{
+      readonly := true;
+    };
+    description -> str{
+      readonly := true;
+    }
+    required pills: tuple<usdc: bigint, eth: bigint, send: bigint>{
+      readonly := true;
+      constraint expression on (
+        __subject__.usdc > 0n
+        or __subject__.eth > 0n
+        or __subject__.send > 0n
+      ){errmessage := 'At least one pill value must be greater than 0'}
+    }
+    image_links -> array<str>{
+      constraint expression on (len(__subject__) <= 4){errmessage:= "Only up to 4 image links allowed"};
+    };
+    required created_at -> datetime {
+      readonly := true;
+      default := datetime_current();
+    };
 
-    multi tags: Tag;
+    multi skills: Skill;
 
     index on ((.sendid, .listing_type));
   }

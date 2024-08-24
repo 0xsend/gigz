@@ -7,30 +7,19 @@ let makeListing = %edgeql(`
     title := <str>$title,
     sendid := <int64>$sendid,
     description := <optional str>$description,
-    contact_links := <array<str>>$contactLinks,
     image_links := <optional array<str>>$imageLinks,
     listing_type := <ListingType>$listingType,
-    fees := (with raw_data :=<json>$feeData,
+    pills := <tuple<usdc: bigint, eth: bigint, send: bigint>>$pills,
+    skills := (with
+              raw_data := <optional json>$skillData,
             for item in json_array_unpack(raw_data) union (
-              insert Fee { amount := <bigint>item['amount'], token := <Token>item['token'] }
+              insert Skill { name := <str>item['name'] }
             )),
-    tags := (with
-              raw_data := <optional json>$tagData,
-            for item in json_array_unpack(raw_data) union (
-              insert Tag { name := <str>item['name'] }
-            )),
-    contact_fees := (with
-              raw_data := <optional json>$contactFeeData,
-            for item in json_array_unpack(raw_data) union (
-              insert Fee { amount := <bigint>item['amount'], token := <Token>item['token'] }
-            ))
-
     }) select NewListing {**}
   `)
 
-module FeeInput = {
-  @gql.inputObject
-  type feeInput = {amount: Schema.BigInt.t, token: token}
+module PillsInput = {
+  @gql.inputObject type pillsInput = {usdc: Schema.BigInt.t, eth: Schema.BigInt.t, send: Schema.BigInt.t}
 }
 
 @gql.inputObject type tagInput = {name: string}
@@ -44,15 +33,11 @@ type makeListing = {
   /** The description of the listing */
   description?: string,
   /** The chain id to use for the session */
-  contactLinks: array<string>,
-  /** The chain id to use for the session */
   imageLinks?: array<string>,
-  /** The fees for the listing */
-  fees: array<FeeInput.feeInput>,
+  /** The payment pills for the listing */
+  pills: PillsInput.pillsInput,
   /** The tags for the listing */
-  tags?: array<tagInput>,
-  /** The fees to contact the lister */
-  contactFees?: array<FeeInput.feeInput>,
+  skills?: array<tagInput>,
 }
 
 @gql.inputUnion
@@ -80,25 +65,14 @@ let makeListing = async (
     title: input.title,
     sendid: input.sendid,
     description: input.description->Null.fromOption,
-    contactLinks: input.contactLinks,
     imageLinks: input.imageLinks->Null.fromOption,
     listingType: listingType->ListingType.castToDb,
-    feeData: input.fees
-    ->Array.map(fee => {"amount": fee.amount, "token": Token.castToDb(fee.token)})
-    ->JSON.stringifyAny
-    ->Option.getOr("[]")
-    ->JSON.parseExn,
-    tagData: switch input.tags
-    ->JSON.stringifyAny
-    ->Option.getOr("[]")
-    ->JSON.parseExn {
-    | exception _ => Null.null
-    | data => Null.Value(data)
+    pills: {
+      usdc: input.pills.usdc,
+      eth: input.pills.eth,
+      send: input.pills.send,
     },
-    contactFeeData: switch input.contactFees
-    ->Option.map(fees =>
-      fees->Array.map(fee => {"amount": fee.amount, "token": Token.castToDb(fee.token)})
-    )
+    skillData: switch input.skills
     ->JSON.stringifyAny
     ->Option.getOr("[]")
     ->JSON.parseExn {

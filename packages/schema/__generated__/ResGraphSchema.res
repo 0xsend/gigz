@@ -124,8 +124,6 @@ let t_TodoUpdateResultError: ref<GraphQLObjectType.t> = Obj.magic({"contents": J
 let get_TodoUpdateResultError = () => t_TodoUpdateResultError.contents
 let t_TodoUpdateResultOk: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoUpdateResultOk = () => t_TodoUpdateResultOk.contents
-let t_Fee: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_Fee = () => t_Fee.contents
 let t_Listing: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Listing = () => t_Listing.contents
 let t_ListingConnection: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
@@ -136,10 +134,12 @@ let t_Mutation: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Mutation = () => t_Mutation.contents
 let t_PageInfo: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_PageInfo = () => t_PageInfo.contents
+let t_Pills: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_Pills = () => t_Pills.contents
 let t_Query: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Query = () => t_Query.contents
-let t_Tag: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
-let get_Tag = () => t_Tag.contents
+let t_Skill: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_Skill = () => t_Skill.contents
 let t_Todo: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Todo = () => t_Todo.contents
 let t_TodoConnection: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
@@ -154,12 +154,12 @@ let input_MakeSessionInputBySendId_conversionInstructions = []
 let input_MakeSessionInputByTag: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_MakeSessionInputByTag = () => input_MakeSessionInputByTag.contents
 let input_MakeSessionInputByTag_conversionInstructions = []
-let input_FeeInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
-let get_FeeInput = () => input_FeeInput.contents
-let input_FeeInput_conversionInstructions = []
 let input_MakeListing: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_MakeListing = () => input_MakeListing.contents
 let input_MakeListing_conversionInstructions = []
+let input_PillsInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
+let get_PillsInput = () => input_PillsInput.contents
+let input_PillsInput_conversionInstructions = []
 let input_TagInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TagInput = () => input_TagInput.contents
 let input_TagInput_conversionInstructions = []
@@ -179,18 +179,17 @@ input_MakeSessionInputByTag_conversionInstructions->Array.pushMany([
   ("chain", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("duration", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
 ])
-input_FeeInput_conversionInstructions->Array.pushMany([])
 input_MakeListing_conversionInstructions->Array.pushMany([
   ("description", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   ("imageLinks", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
   (
-    "fees",
+    "pills",
     makeInputObjectFieldConverterFn(v =>
-      v->Array.map(v => v->applyConversionToInputObject(input_FeeInput_conversionInstructions))
+      v->applyConversionToInputObject(input_PillsInput_conversionInstructions)
     ),
   ),
   (
-    "tags",
+    "skills",
     makeInputObjectFieldConverterFn(v =>
       switch v->Nullable.toOption {
       | None => None
@@ -201,19 +200,8 @@ input_MakeListing_conversionInstructions->Array.pushMany([
       }
     ),
   ),
-  (
-    "contactFees",
-    makeInputObjectFieldConverterFn(v =>
-      switch v->Nullable.toOption {
-      | None => None
-      | Some(v) =>
-        v
-        ->Array.map(v => v->applyConversionToInputObject(input_FeeInput_conversionInstructions))
-        ->Some
-      }
-    ),
-  ),
 ])
+input_PillsInput_conversionInstructions->Array.pushMany([])
 input_TagInput_conversionInstructions->Array.pushMany([])
 input_TodoAddInput_conversionInstructions->Array.pushMany([])
 input_TodoUpdateInput_conversionInstructions->Array.pushMany([
@@ -321,8 +309,7 @@ let interface_Node_resolveType = (v: Interface_node.Resolver.t) =>
   switch v {
   | User(_) => "User"
   | Listing(_) => "Listing"
-  | Tag(_) => "Tag"
-  | Fee(_) => "Fee"
+  | Skill(_) => "Skill"
   | Todo(_) => "Todo"
   }
 
@@ -625,69 +612,12 @@ t_TodoUpdateResultOk.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
-t_Fee.contents = GraphQLObjectType.make({
-  name: "Fee",
-  description: ?None,
-  interfaces: [get_Node()],
-  fields: () =>
-    {
-      "amount": {
-        typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["amount"]
-        }),
-      },
-      "id": {
-        typ: Scalars.id->Scalars.toGraphQLType->nonNull,
-        description: "The id of the object.",
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, args, ctx, info) => {
-          let src = typeUnwrapper(src)
-          NodeInterfaceResolver.id(src, ~typename=Fee)
-        }),
-      },
-      "token": {
-        typ: enum_Token->GraphQLEnumType.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["token"]
-        }),
-      },
-    }->makeFields,
-})
 t_Listing.contents = GraphQLObjectType.make({
   name: "Listing",
   description: "A single listing item.",
   interfaces: [get_Node()],
   fields: () =>
     {
-      "contactFees": {
-        typ: GraphQLListType.make(
-          get_Fee()->GraphQLObjectType.toGraphQLType->nonNull,
-        )->GraphQLListType.toGraphQLType,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["contactFees"]
-        }),
-      },
-      "contactLinks": {
-        typ: GraphQLListType.make(Scalars.string->Scalars.toGraphQLType->nonNull)
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["contactLinks"]
-        }),
-      },
       "createdAt": {
         typ: Scalars.float->Scalars.toGraphQLType->nonNull,
         description: ?None,
@@ -704,17 +634,6 @@ t_Listing.contents = GraphQLObjectType.make({
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
           src["description"]
-        }),
-      },
-      "fees": {
-        typ: GraphQLListType.make(get_Fee()->GraphQLObjectType.toGraphQLType->nonNull)
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-        resolve: makeResolveFn((src, _args, _ctx, _info) => {
-          let src = typeUnwrapper(src)
-          src["fees"]
         }),
       },
       "id": {
@@ -737,15 +656,24 @@ t_Listing.contents = GraphQLObjectType.make({
           src["imageLinks"]
         }),
       },
-      "tags": {
-        typ: GraphQLListType.make(get_Tag()->GraphQLObjectType.toGraphQLType->nonNull)
+      "pills": {
+        typ: get_Pills()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["pills"]
+        }),
+      },
+      "skills": {
+        typ: GraphQLListType.make(get_Skill()->GraphQLObjectType.toGraphQLType->nonNull)
         ->GraphQLListType.toGraphQLType
         ->nonNull,
         description: ?None,
         deprecationReason: ?None,
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
-          src["tags"]
+          src["skills"]
         }),
       },
       "title": {
@@ -955,6 +883,41 @@ t_PageInfo.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
+t_Pills.contents = GraphQLObjectType.make({
+  name: "Pills",
+  description: ?None,
+  interfaces: [],
+  fields: () =>
+    {
+      "eth": {
+        typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["eth"]
+        }),
+      },
+      "send": {
+        typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["send"]
+        }),
+      },
+      "usdc": {
+        typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["usdc"]
+        }),
+      },
+    }->makeFields,
+})
 t_Query.contents = GraphQLObjectType.make({
   name: "Query",
   description: ?None,
@@ -1089,8 +1052,8 @@ t_Query.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
-t_Tag.contents = GraphQLObjectType.make({
-  name: "Tag",
+t_Skill.contents = GraphQLObjectType.make({
+  name: "Skill",
   description: ?None,
   interfaces: [get_Node()],
   fields: () =>
@@ -1101,7 +1064,7 @@ t_Tag.contents = GraphQLObjectType.make({
         deprecationReason: ?None,
         resolve: makeResolveFn((src, args, ctx, info) => {
           let src = typeUnwrapper(src)
-          NodeInterfaceResolver.id(src, ~typename=Tag)
+          NodeInterfaceResolver.id(src, ~typename=Skill)
         }),
       },
       "name": {
@@ -1294,56 +1257,14 @@ input_MakeSessionInputByTag.contents = GraphQLInputObjectType.make({
       },
     }->makeFields,
 })
-input_FeeInput.contents = GraphQLInputObjectType.make({
-  name: "FeeInput",
-  description: ?None,
-  fields: () =>
-    {
-      "amount": {
-        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-      },
-      "token": {
-        GraphQLInputObjectType.typ: enum_Token->GraphQLEnumType.toGraphQLType->nonNull,
-        description: ?None,
-        deprecationReason: ?None,
-      },
-    }->makeFields,
-})
 input_MakeListing.contents = GraphQLInputObjectType.make({
   name: "MakeListing",
   description: ?None,
   fields: () =>
     {
-      "contactFees": {
-        GraphQLInputObjectType.typ: GraphQLListType.make(
-          get_FeeInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
-        )->GraphQLListType.toGraphQLType,
-        description: "The fees to contact the lister",
-        deprecationReason: ?None,
-      },
-      "contactLinks": {
-        GraphQLInputObjectType.typ: GraphQLListType.make(
-          Scalars.string->Scalars.toGraphQLType->nonNull,
-        )
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
-        description: "The chain id to use for the session",
-        deprecationReason: ?None,
-      },
       "description": {
         GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
         description: "The description of the listing",
-        deprecationReason: ?None,
-      },
-      "fees": {
-        GraphQLInputObjectType.typ: GraphQLListType.make(
-          get_FeeInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
-        )
-        ->GraphQLListType.toGraphQLType
-        ->nonNull,
-        description: "The fees for the listing",
         deprecationReason: ?None,
       },
       "imageLinks": {
@@ -1353,12 +1274,17 @@ input_MakeListing.contents = GraphQLInputObjectType.make({
         description: "The chain id to use for the session",
         deprecationReason: ?None,
       },
+      "pills": {
+        GraphQLInputObjectType.typ: get_PillsInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
+        description: "The payment pills for the listing",
+        deprecationReason: ?None,
+      },
       "sendid": {
         GraphQLInputObjectType.typ: Scalars.float->Scalars.toGraphQLType->nonNull,
         description: "The sendid to request a session for",
         deprecationReason: ?None,
       },
-      "tags": {
+      "skills": {
         GraphQLInputObjectType.typ: GraphQLListType.make(
           get_TagInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
         )->GraphQLListType.toGraphQLType,
@@ -1368,6 +1294,28 @@ input_MakeListing.contents = GraphQLInputObjectType.make({
       "title": {
         GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
         description: "The title of the listing",
+        deprecationReason: ?None,
+      },
+    }->makeFields,
+})
+input_PillsInput.contents = GraphQLInputObjectType.make({
+  name: "PillsInput",
+  description: ?None,
+  fields: () =>
+    {
+      "eth": {
+        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+      },
+      "send": {
+        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+      },
+      "usdc": {
+        GraphQLInputObjectType.typ: scalar_BigInt->GraphQLScalar.toGraphQLType->nonNull,
+        description: ?None,
         deprecationReason: ?None,
       },
     }->makeFields,
@@ -1500,11 +1448,11 @@ let schema = GraphQLSchemaType.make({
   "query": get_Query(),
   "mutation": get_Mutation(),
   "types": [
-    get_Fee()->GraphQLObjectType.toGraphQLType,
     get_TodoDeleteResultError()->GraphQLObjectType.toGraphQLType,
     get_ListingConnection()->GraphQLObjectType.toGraphQLType,
     get_Query()->GraphQLObjectType.toGraphQLType,
     get_TodoAddResultError()->GraphQLObjectType.toGraphQLType,
+    get_Skill()->GraphQLObjectType.toGraphQLType,
     get_ConsumeSessionResultOk()->GraphQLObjectType.toGraphQLType,
     get_TodoUpdateResultOk()->GraphQLObjectType.toGraphQLType,
     get_TodoEdge()->GraphQLObjectType.toGraphQLType,
@@ -1520,8 +1468,8 @@ let schema = GraphQLSchemaType.make({
     get_ConsumeSessionResultError()->GraphQLObjectType.toGraphQLType,
     get_TodoUpdateResultError()->GraphQLObjectType.toGraphQLType,
     get_Listing()->GraphQLObjectType.toGraphQLType,
-    get_Tag()->GraphQLObjectType.toGraphQLType,
     get_TodoAddResultOk()->GraphQLObjectType.toGraphQLType,
+    get_Pills()->GraphQLObjectType.toGraphQLType,
     get_Mutation()->GraphQLObjectType.toGraphQLType,
     get_TodoConnection()->GraphQLObjectType.toGraphQLType,
     get_Node()->GraphQLInterfaceType.toGraphQLType,
@@ -1535,10 +1483,10 @@ let schema = GraphQLSchemaType.make({
     get_MakeSessionInput()->GraphQLInputObjectType.toGraphQLType,
     get_TagInput()->GraphQLInputObjectType.toGraphQLType,
     get_TodoUpdateInput()->GraphQLInputObjectType.toGraphQLType,
-    get_FeeInput()->GraphQLInputObjectType.toGraphQLType,
     get_MakeSessionInputByTag()->GraphQLInputObjectType.toGraphQLType,
     get_MakeListing()->GraphQLInputObjectType.toGraphQLType,
     get_TodoAddInput()->GraphQLInputObjectType.toGraphQLType,
+    get_PillsInput()->GraphQLInputObjectType.toGraphQLType,
     get_MakeSessionInputBySendId()->GraphQLInputObjectType.toGraphQLType,
     enum_Token->GraphQLEnumType.toGraphQLType,
     enum_LookupType->GraphQLEnumType.toGraphQLType,
