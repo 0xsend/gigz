@@ -60,6 +60,29 @@ let scalar_BigInt = GraphQLScalar.make({
   }
   config
 })
+let enum_Category = GraphQLEnumType.make({
+  name: "Category",
+  description: ?None,
+  values: {
+    "GraphicDesign": {
+      GraphQLEnumType.value: "GraphicDesign",
+      description: ?None,
+      deprecationReason: ?None,
+    },
+    "MotionDesign": {
+      GraphQLEnumType.value: "MotionDesign",
+      description: ?None,
+      deprecationReason: ?None,
+    },
+    "ThreeDArt": {GraphQLEnumType.value: "ThreeDArt", description: ?None, deprecationReason: ?None},
+    "PhotoVideo": {
+      GraphQLEnumType.value: "PhotoVideo",
+      description: ?None,
+      deprecationReason: ?None,
+    },
+    "WebDesign": {GraphQLEnumType.value: "WebDesign", description: ?None, deprecationReason: ?None},
+  }->makeEnumValues,
+})
 let enum_Chain = GraphQLEnumType.make({
   name: "Chain",
   description: ?None,
@@ -160,9 +183,9 @@ let input_MakeListing_conversionInstructions = []
 let input_PillsInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_PillsInput = () => input_PillsInput.contents
 let input_PillsInput_conversionInstructions = []
-let input_TagInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
-let get_TagInput = () => input_TagInput.contents
-let input_TagInput_conversionInstructions = []
+let input_SkillInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
+let get_SkillInput = () => input_SkillInput.contents
+let input_SkillInput_conversionInstructions = []
 let input_TodoAddInput: ref<GraphQLInputObjectType.t> = Obj.magic({"contents": Js.null})
 let get_TodoAddInput = () => input_TodoAddInput.contents
 let input_TodoAddInput_conversionInstructions = []
@@ -195,14 +218,14 @@ input_MakeListing_conversionInstructions->Array.pushMany([
       | None => None
       | Some(v) =>
         v
-        ->Array.map(v => v->applyConversionToInputObject(input_TagInput_conversionInstructions))
+        ->Array.map(v => v->applyConversionToInputObject(input_SkillInput_conversionInstructions))
         ->Some
       }
     ),
   ),
 ])
 input_PillsInput_conversionInstructions->Array.pushMany([])
-input_TagInput_conversionInstructions->Array.pushMany([])
+input_SkillInput_conversionInstructions->Array.pushMany([])
 input_TodoAddInput_conversionInstructions->Array.pushMany([])
 input_TodoUpdateInput_conversionInstructions->Array.pushMany([
   ("completed", makeInputObjectFieldConverterFn(v => v->Nullable.toOption)),
@@ -618,6 +641,17 @@ t_Listing.contents = GraphQLObjectType.make({
   interfaces: [get_Node()],
   fields: () =>
     {
+      "categories": {
+        typ: GraphQLListType.make(enum_Category->GraphQLEnumType.toGraphQLType->nonNull)
+        ->GraphQLListType.toGraphQLType
+        ->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["categories"]
+        }),
+      },
       "createdAt": {
         typ: Scalars.float->Scalars.toGraphQLType->nonNull,
         description: ?None,
@@ -625,6 +659,15 @@ t_Listing.contents = GraphQLObjectType.make({
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
           src["createdAt"]
+        }),
+      },
+      "creator": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["creator"]
         }),
       },
       "description": {
@@ -1262,6 +1305,20 @@ input_MakeListing.contents = GraphQLInputObjectType.make({
   description: ?None,
   fields: () =>
     {
+      "categories": {
+        GraphQLInputObjectType.typ: GraphQLListType.make(
+          enum_Category->GraphQLEnumType.toGraphQLType->nonNull,
+        )
+        ->GraphQLListType.toGraphQLType
+        ->nonNull,
+        description: "The categories for the listing",
+        deprecationReason: ?None,
+      },
+      "creator": {
+        GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: "The id to request a session for",
+        deprecationReason: ?None,
+      },
       "description": {
         GraphQLInputObjectType.typ: Scalars.string->Scalars.toGraphQLType,
         description: "The description of the listing",
@@ -1279,14 +1336,9 @@ input_MakeListing.contents = GraphQLInputObjectType.make({
         description: "The payment pills for the listing",
         deprecationReason: ?None,
       },
-      "sendid": {
-        GraphQLInputObjectType.typ: Scalars.float->Scalars.toGraphQLType->nonNull,
-        description: "The sendid to request a session for",
-        deprecationReason: ?None,
-      },
       "skills": {
         GraphQLInputObjectType.typ: GraphQLListType.make(
-          get_TagInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
+          get_SkillInput()->GraphQLInputObjectType.toGraphQLType->nonNull,
         )->GraphQLListType.toGraphQLType,
         description: "The tags for the listing",
         deprecationReason: ?None,
@@ -1320,8 +1372,8 @@ input_PillsInput.contents = GraphQLInputObjectType.make({
       },
     }->makeFields,
 })
-input_TagInput.contents = GraphQLInputObjectType.make({
-  name: "TagInput",
+input_SkillInput.contents = GraphQLInputObjectType.make({
+  name: "SkillInput",
   description: ?None,
   fields: () =>
     {
@@ -1481,13 +1533,14 @@ let schema = GraphQLSchemaType.make({
     get_MakeSessionResult()->GraphQLUnionType.toGraphQLType,
     get_MakeListingByType()->GraphQLInputObjectType.toGraphQLType,
     get_MakeSessionInput()->GraphQLInputObjectType.toGraphQLType,
-    get_TagInput()->GraphQLInputObjectType.toGraphQLType,
     get_TodoUpdateInput()->GraphQLInputObjectType.toGraphQLType,
     get_MakeSessionInputByTag()->GraphQLInputObjectType.toGraphQLType,
     get_MakeListing()->GraphQLInputObjectType.toGraphQLType,
     get_TodoAddInput()->GraphQLInputObjectType.toGraphQLType,
     get_PillsInput()->GraphQLInputObjectType.toGraphQLType,
+    get_SkillInput()->GraphQLInputObjectType.toGraphQLType,
     get_MakeSessionInputBySendId()->GraphQLInputObjectType.toGraphQLType,
+    enum_Category->GraphQLEnumType.toGraphQLType,
     enum_Token->GraphQLEnumType.toGraphQLType,
     enum_LookupType->GraphQLEnumType.toGraphQLType,
     enum_Chain->GraphQLEnumType.toGraphQLType,

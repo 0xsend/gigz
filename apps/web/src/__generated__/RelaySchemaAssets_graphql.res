@@ -2,6 +2,25 @@
 @@warning("-30")
 
 @live @unboxed
+type enum_Category = 
+  | GraphicDesign
+  | MotionDesign
+  | ThreeDArt
+  | PhotoVideo
+  | WebDesign
+  | FutureAddedValue(string)
+
+
+@live @unboxed
+type enum_Category_input = 
+  | GraphicDesign
+  | MotionDesign
+  | ThreeDArt
+  | PhotoVideo
+  | WebDesign
+
+
+@live @unboxed
 type enum_Chain = 
   | Mainnet
   | Base
@@ -86,38 +105,24 @@ type enum_CatchFieldTo_input =
 
 
 @live
-type rec input_FeeInput = {
-  amount: Schema.BigInt.t,
-  token: enum_Token_input,
-}
-
-@live
-and input_FeeInput_nullable = {
-  amount: Schema.BigInt.t,
-  token: enum_Token_input,
-}
-
-@live
-and input_MakeListing = {
-  contactFees?: array<input_FeeInput>,
-  contactLinks: array<string>,
+type rec input_MakeListing = {
+  categories: array<enum_Category_input>,
+  creator: string,
   description?: string,
-  fees: array<input_FeeInput>,
   imageLinks?: array<string>,
-  sendid: float,
-  tags?: array<input_TagInput>,
+  pills: input_PillsInput,
+  skills?: array<input_SkillInput>,
   title: string,
 }
 
 @live
 and input_MakeListing_nullable = {
-  contactFees?: Js.Null.t<array<input_FeeInput_nullable>>,
-  contactLinks: array<string>,
+  categories: array<enum_Category_input>,
+  creator: string,
   description?: Js.Null.t<string>,
-  fees: array<input_FeeInput_nullable>,
   imageLinks?: Js.Null.t<array<string>>,
-  sendid: float,
-  tags?: Js.Null.t<array<input_TagInput_nullable>>,
+  pills: input_PillsInput_nullable,
+  skills?: Js.Null.t<array<input_SkillInput_nullable>>,
   title: string,
 }
 
@@ -182,12 +187,26 @@ and input_MakeSessionInputByTag_nullable = {
 }
 
 @live
-and input_TagInput = {
+and input_PillsInput = {
+  eth: Schema.BigInt.t,
+  send: Schema.BigInt.t,
+  usdc: Schema.BigInt.t,
+}
+
+@live
+and input_PillsInput_nullable = {
+  eth: Schema.BigInt.t,
+  send: Schema.BigInt.t,
+  usdc: Schema.BigInt.t,
+}
+
+@live
+and input_SkillInput = {
   name: string,
 }
 
 @live
-and input_TagInput_nullable = {
+and input_SkillInput_nullable = {
   name: string,
 }
 

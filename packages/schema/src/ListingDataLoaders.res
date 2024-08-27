@@ -1,24 +1,24 @@
-type list = {listings: array<Listing.listing>, totalCount: float}
+type listings = {listings: array<Listing.listing>, totalCount: float}
+type offers = {offers: array<Listing.listing>, totalCount: float}
+type gigs = {gigs: array<Listing.listing>, totalCount: float}
 
 type t = {
   byId: DataLoader.t<(EdgeDB.Client.t, string), option<Listing.listing>>,
-  many: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Listings.args), list>,
-  offers: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Offers.args), list>,
-  gigs: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Gigs.args), list>,
+  listings: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Listings.args), listings>,
+  offers: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Offers.args), offers>,
+  gigs: DataLoader.t<(EdgeDB.Client.t, Listing__edgeql.Gigs.args), gigs>,
 }
 
 let make = () => {
   byId: DataLoader.makeSingle(async ((edgedbClient, id)) =>
     (await Listing.one(edgedbClient, {id: id}, ~onError=Console.error))->Option.map(
-      Listing.castToResgraph,
+      Listing.castOneToResgraph,
     )
   ),
-  many: DataLoader.makeSingle(async ((edgedbClient, args)) =>
+  listings: DataLoader.makeSingle(async ((edgedbClient, args)) =>
     switch await Listing.listings(edgedbClient, args) {
     | Ok({listings, total_cnt}) => {
-        listings: listings->Array.map(listing =>
-          (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
-        ),
+        listings: listings->Listing.castManyToResgraph,
         totalCount: total_cnt,
       }
     | Error(_) => panic("Error listings") //@Todo: better error handling
@@ -26,10 +26,8 @@ let make = () => {
   ),
   offers: DataLoader.makeSingle(async ((edgedbClient, args)) =>
     switch await Listing.offers(edgedbClient, args) {
-    | Ok({listings, total_cnt}) => {
-        listings: listings->Array.map(listing =>
-          (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
-        ),
+    | Ok({offers, total_cnt}) => {
+        offers: offers->Listing.castOffersToResgraph,
         totalCount: total_cnt,
       }
     | Error(_) => panic("Error offers") //@Todo: better error handling
@@ -37,10 +35,8 @@ let make = () => {
   ),
   gigs: DataLoader.makeSingle(async ((edgedbClient, args)) =>
     switch await Listing.gigs(edgedbClient, args) {
-    | Ok({listings, total_cnt}) => {
-        listings: listings->Array.map(listing =>
-          (listing :> Listing__edgeql.One.response)->Listing.castToResgraph
-        ),
+    | Ok({gigs, total_cnt}) => {
+        gigs: gigs->Listing.castGigsToResgraph,
         totalCount: total_cnt,
       }
     | Error(_) => panic("Error gigs") //@Todo: better error handling

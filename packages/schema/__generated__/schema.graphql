@@ -2,6 +2,14 @@
 """A bigint."""
 scalar BigInt
 
+enum Category {
+  GraphicDesign
+  MotionDesign
+  ThreeDArt
+  PhotoVideo
+  WebDesign
+}
+
 enum Chain {
   Mainnet
   Base
@@ -92,8 +100,8 @@ input MakeSessionInputByTag {
 
 input MakeListing {
 
-  """The sendid to request a session for"""
-  sendid: Float!
+  """The id to request a session for"""
+  creator: String!
 
   """The title of the listing"""
   title: String!
@@ -108,7 +116,10 @@ input MakeListing {
   pills: PillsInput!
 
   """The tags for the listing"""
-  skills: [TagInput!]
+  skills: [SkillInput!]
+
+  """The categories for the listing"""
+  categories: [Category!]!
 }
 
 input PillsInput {
@@ -117,7 +128,7 @@ input PillsInput {
   send: BigInt!
 }
 
-input TagInput {
+input SkillInput {
   name: String!
 }
 
@@ -222,12 +233,14 @@ type TodoUpdateResultOk {
 
 """A single listing item."""
 type Listing implements Node {
+  creator: String!
   title: String!
   description: String
   imageLinks: [String!]
   pills: Pills!
   skills: [Skill!]!
   createdAt: Float!
+  categories: [Category!]!
 
   """The id of the object."""
   id: ID!
