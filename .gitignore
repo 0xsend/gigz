@@ -14,7 +14,7 @@ dist
 stats.html
 *.mjs
 !/schema/*.mjs
-!apps/sendpay-example/api/graphql.mjs
+!**/**/api/*.mjs
 
 # Ignore generated files but allow keeping the folder itself.
 src/__generated__/**
