@@ -29,7 +29,7 @@ let default = createYoga({
 
 if Vercel.env->Option.isNone {
   let yoga = createYoga({
-    graphqlEndpoint: "/api/graphql",
+    graphqlEndpoint: "/_api/graphql",
     schema: ResGraphSchema.schema,
     context: async ({request}) => {
       open ResGraphContext
@@ -44,6 +44,6 @@ if Vercel.env->Option.isNone {
   let server = NodeHttpServer.createServer(yoga)
 
   server->NodeHttpServer.listen(9000, () => {
-    Console.info("Server is running on http://localhost:9000/api/graphql")
+    Console.info("Server is running on http://localhost:9000/_api/graphql")
   })
 }
