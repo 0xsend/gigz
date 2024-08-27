@@ -1,9 +1,9 @@
-// @sourceHash 54e722e0b63471afc56634ab5b189740
+// @sourceHash 9aa0dbc8e0e2b63b8cd46caf21f6a85a
 
 module Listings = {
   let queryText = `# @name listings
       with
-        selection := (select Listing{**}
+        selection := (select Listing{*, creator, skills:{id, title_name}}
           order by .created_at desc
           offset <optional int64>$offset
           limit <optional int64>$limit),
@@ -25,20 +25,45 @@ module Listings = {
     send: bigint,
   }
   
+  type response__listings__creator__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
+  }
+  
+  type response__listings__creator__socials = {
+    x: string,
+    telegram: string,
+  }
+  
+  type response__listings__creator = {
+    id: string,
+    categories: Null.t<array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>>,
+    created_at: Date.t,
+    sendid: float,
+    bio: Null.t<string>,
+    hearts: Null.t<float>,
+    pills: response__listings__creator__pills,
+    portfolio_link: Null.t<string>,
+    socials: response__listings__creator__socials,
+  }
+  
   type response__listings__skills = {
+    title_name: string,
     name: string,
     id: string,
   }
   
   type response__listings = {
     id: string,
+    categories: array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>,
+    created_at: Date.t,
     listing_type: [#Gig | #Offer],
-    sendid: float,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
-    title: string,
-    created_at: Date.t,
     pills: response__listings__pills,
+    title: string,
+    creator: response__listings__creator,
     skills: array<response__listings__skills>,
   }
   
@@ -60,11 +85,20 @@ module Listings = {
 
 module One = {
   let queryText = `# @name one
-    select Listing {**} filter .id = <uuid>$id limit 1;`
+    select Listing {*, creator, skills:{id, title_name}} filter .id = <uuid>$id limit 1;`
   
   @live  
   type args = {
     id: string,
+  }
+  
+  type response__creator = {
+    id: string,
+  }
+  
+  type response__skills = {
+    id: string,
+    title_name: string,
   }
   
   type response__pills = {
@@ -73,21 +107,17 @@ module One = {
     send: bigint,
   }
   
-  type response__skills = {
-    id: string,
-    name: string,
-  }
-  
   type response = {
+    creator: response__creator,
+    skills: array<response__skills>,
     id: string,
+    categories: array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>,
+    created_at: Date.t,
     listing_type: [#Gig | #Offer],
-    sendid: float,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
-    title: string,
-    created_at: Date.t,
     pills: response__pills,
-    skills: array<response__skills>,
+    title: string,
   }
   
   @live
@@ -104,14 +134,14 @@ module One = {
 module Offers = {
   let queryText = `# @name offers
       with
-        selection := (select Listing {**}
+        selection := (select Listing {*, creator, skills:{id, title_name}}
           filter .listing_type = ListingType.Offer
           order by .created_at desc
           offset <optional int64>$offset
           limit <optional int64>$limit),
         select_all := (select Listing filter .listing_type = ListingType.Offer)
       select {
-        listings := selection{**},
+        offers := selection{**},
         total_cnt := count(select_all)
       }`
   
@@ -121,31 +151,56 @@ module Offers = {
     limit?: Null.t<float>,
   }
   
-  type response__listings__pills = {
+  type response__offers__pills = {
     usdc: bigint,
     eth: bigint,
     send: bigint,
   }
   
-  type response__listings__skills = {
+  type response__offers__creator__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
+  }
+  
+  type response__offers__creator__socials = {
+    x: string,
+    telegram: string,
+  }
+  
+  type response__offers__creator = {
+    id: string,
+    categories: Null.t<array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>>,
+    created_at: Date.t,
+    sendid: float,
+    bio: Null.t<string>,
+    hearts: Null.t<float>,
+    pills: response__offers__creator__pills,
+    portfolio_link: Null.t<string>,
+    socials: response__offers__creator__socials,
+  }
+  
+  type response__offers__skills = {
+    title_name: string,
     name: string,
     id: string,
   }
   
-  type response__listings = {
+  type response__offers = {
     id: string,
+    categories: array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>,
+    created_at: Date.t,
     listing_type: [#Gig | #Offer],
-    sendid: float,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
+    pills: response__offers__pills,
     title: string,
-    created_at: Date.t,
-    pills: response__listings__pills,
-    skills: array<response__listings__skills>,
+    creator: response__offers__creator,
+    skills: array<response__offers__skills>,
   }
   
   type response = {
-    listings: array<response__listings>,
+    offers: array<response__offers>,
     total_cnt: float,
   }
   
@@ -163,14 +218,14 @@ module Offers = {
 module Gigs = {
   let queryText = `# @name gigs
       with
-        selection := (select Listing {**}
+        selection := (select Listing {*, creator, skills:{id, title_name}}
           filter .listing_type = ListingType.Gig
           order by .created_at desc
           offset <optional int64>$offset
           limit <optional int64>$limit),
         select_all := (select Listing filter .listing_type = ListingType.Gig)
       select {
-        listings := selection{**},
+        gigs := selection{**},
         total_cnt := count(select_all)
       }`
   
@@ -180,31 +235,56 @@ module Gigs = {
     limit?: Null.t<float>,
   }
   
-  type response__listings__pills = {
+  type response__gigs__pills = {
     usdc: bigint,
     eth: bigint,
     send: bigint,
   }
   
-  type response__listings__skills = {
+  type response__gigs__creator__pills = {
+    usdc: bigint,
+    eth: bigint,
+    send: bigint,
+  }
+  
+  type response__gigs__creator__socials = {
+    x: string,
+    telegram: string,
+  }
+  
+  type response__gigs__creator = {
+    id: string,
+    categories: Null.t<array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>>,
+    created_at: Date.t,
+    sendid: float,
+    bio: Null.t<string>,
+    hearts: Null.t<float>,
+    pills: response__gigs__creator__pills,
+    portfolio_link: Null.t<string>,
+    socials: response__gigs__creator__socials,
+  }
+  
+  type response__gigs__skills = {
+    title_name: string,
     name: string,
     id: string,
   }
   
-  type response__listings = {
+  type response__gigs = {
     id: string,
+    categories: array<[#GraphicDesign | #MotionDesign | #ThreeDArt | #PhotoVideo | #WebDesign]>,
+    created_at: Date.t,
     listing_type: [#Gig | #Offer],
-    sendid: float,
     description: Null.t<string>,
     image_links: Null.t<array<string>>,
+    pills: response__gigs__pills,
     title: string,
-    created_at: Date.t,
-    pills: response__listings__pills,
-    skills: array<response__listings__skills>,
+    creator: response__gigs__creator,
+    skills: array<response__gigs__skills>,
   }
   
   type response = {
-    listings: array<response__listings>,
+    gigs: array<response__gigs>,
     total_cnt: float,
   }
   
@@ -216,50 +296,5 @@ module Gigs = {
   @live
   let transaction = (transaction: EdgeDB.Transaction.t, args: args): promise<result<response, EdgeDB.Error.errorFromOperation>> => {
     transaction->EdgeDB.TransactionHelpers.singleRequired(queryText, ~args)
-  }
-}
-
-module OfferBySendId = {
-  let queryText = `# @name offerBySendId
-    select Listing {**} filter
-      .listing_type = ListingType.Offer
-      and .sendid = <int64>$sendid;`
-  
-  @live  
-  type args = {
-    sendid: float,
-  }
-  
-  type response__pills = {
-    usdc: bigint,
-    eth: bigint,
-    send: bigint,
-  }
-  
-  type response__skills = {
-    id: string,
-    name: string,
-  }
-  
-  type response = {
-    id: string,
-    listing_type: [#Gig | #Offer],
-    sendid: float,
-    description: Null.t<string>,
-    image_links: Null.t<array<string>>,
-    title: string,
-    created_at: Date.t,
-    pills: response__pills,
-    skills: array<response__skills>,
-  }
-  
-  @live
-  let query = (client: EdgeDB.Client.t, args: args): promise<array<response>> => {
-    client->EdgeDB.QueryHelpers.many(queryText, ~args)
-  }
-  
-  @live
-  let transaction = (transaction: EdgeDB.Transaction.t, args: args): promise<array<response>> => {
-    transaction->EdgeDB.TransactionHelpers.many(queryText, ~args)
   }
 }

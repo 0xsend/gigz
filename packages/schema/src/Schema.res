@@ -37,3 +37,24 @@ module BigInt: {
 
   let serialize = x => x->BigInt.toString->String
 }
+
+module Category = {
+  @gql.enum
+  type category = GraphicDesign | MotionDesign | ThreeDArt | PhotoVideo | WebDesign
+  let castFromDb = category =>
+    switch category {
+    | #GraphicDesign => GraphicDesign
+    | #MotionDesign => MotionDesign
+    | #ThreeDArt => ThreeDArt
+    | #PhotoVideo => PhotoVideo
+    | #WebDesign => WebDesign
+    }
+  let castToDb = category =>
+    switch category {
+    | GraphicDesign => #GraphicDesign
+    | MotionDesign => #MotionDesign
+    | ThreeDArt => #ThreeDArt
+    | PhotoVideo => #PhotoVideo
+    | WebDesign => #WebDesign
+    }
+}

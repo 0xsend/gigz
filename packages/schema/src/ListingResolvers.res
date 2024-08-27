@@ -20,7 +20,7 @@ let listings = async (
   | Some(offset) => Value(offset)
   }
   let {listings, totalCount} =
-    await ctx.dataLoaders.listing.many->DataLoader.load((ctx.edgedbClient, {limit, offset}))
+    await ctx.dataLoaders.listing.listings->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
     listings,
@@ -49,11 +49,11 @@ let offers = async (
   | Some(offset) => Value(offset)
   }
 
-  let {listings, totalCount} =
+  let {offers, totalCount} =
     await ctx.dataLoaders.listing.offers->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
-    listings,
+    offers,
     ~args={first, after, last: None, before: None},
     ~meta={sliceStart: offset->Null.getOr(0.), arrayLength: totalCount},
   )
@@ -79,11 +79,11 @@ let gigs = async (
   | Some(offset) => Value(offset)
   }
 
-  let {listings, totalCount} =
+  let {gigs, totalCount} =
     await ctx.dataLoaders.listing.gigs->DataLoader.load((ctx.edgedbClient, {limit, offset}))
 
   ConnectionHelpers.connectionFromArraySlice(
-    listings,
+    gigs,
     ~args={first, after, last: None, before: None},
     ~meta={sliceStart: offset->Null.getOr(0.), arrayLength: totalCount},
   )

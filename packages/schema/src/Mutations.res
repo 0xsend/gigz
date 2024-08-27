@@ -4,30 +4,30 @@ open Listing
 let makeListing = %edgeql(`
   # @name makeListing
   with NewListing := (insert Listing {
+    creator := (select Profile filter .id = <uuid>$creator),
     title := <str>$title,
-    sendid := <int64>$sendid,
     description := <optional str>$description,
     image_links := <optional array<str>>$imageLinks,
     listing_type := <ListingType>$listingType,
     pills := <tuple<usdc: bigint, eth: bigint, send: bigint>>$pills,
+    categories := <array<Category>>$categories,
     skills := (with
               raw_data := <optional json>$skillData,
             for item in json_array_unpack(raw_data) union (
               insert Skill { name := <str>item['name'] }
             )),
-    }) select NewListing {**}
+    }) select NewListing {*, creator, skills:{id, title_name}}
   `)
 
-module PillsInput = {
-  @gql.inputObject type pillsInput = {usdc: Schema.BigInt.t, eth: Schema.BigInt.t, send: Schema.BigInt.t}
-}
+@gql.inputObject
+type pillsInput = {usdc: Schema.BigInt.t, eth: Schema.BigInt.t, send: Schema.BigInt.t}
 
-@gql.inputObject type tagInput = {name: string}
+@gql.inputObject type skillInput = {name: string}
 
 @gql.inputObject
 type makeListing = {
-  /** The sendid to request a session for*/
-  sendid: float,
+  /** The id to request a session for*/
+  creator: string,
   /** The title of the listing */
   title: string,
   /** The description of the listing */
@@ -35,9 +35,11 @@ type makeListing = {
   /** The chain id to use for the session */
   imageLinks?: array<string>,
   /** The payment pills for the listing */
-  pills: PillsInput.pillsInput,
+  pills: pillsInput,
   /** The tags for the listing */
-  skills?: array<tagInput>,
+  skills?: array<skillInput>,
+  /** The categories for the listing */
+  categories: array<Schema.Category.category>,
 }
 
 @gql.inputUnion
@@ -49,6 +51,7 @@ type makeListingByType =
 type makeListingResult =
   | Ok({newListing: Listing.listing})
   | Error({name: string, reason: string})
+
 
 @gql.field
 let makeListing = async (
@@ -63,7 +66,7 @@ let makeListing = async (
   // @todo: sendpay confirmation
   switch await ctx.edgedbClient->makeListing({
     title: input.title,
-    sendid: input.sendid,
+    creator: input.creator,
     description: input.description->Null.fromOption,
     imageLinks: input.imageLinks->Null.fromOption,
     listingType: listingType->ListingType.castToDb,
@@ -72,6 +75,7 @@ let makeListing = async (
       eth: input.pills.eth,
       send: input.pills.send,
     },
+    categories: input.categories->Array.map(category => category->Schema.Category.castToDb),
     skillData: switch input.skills
     ->JSON.stringifyAny
     ->Option.getOr("[]")
@@ -81,11 +85,13 @@ let makeListing = async (
     },
   }) {
   | Ok(listing) =>
-    Ok({newListing: Listing.castToResgraph((listing :> Listing__edgeql.One.response))})
+    Ok({newListing: Listing.castOneToResgraph((listing :> Listing__edgeql.One.response))})
   | Error(edgeDbError) =>
     switch edgeDbError {
     | EdgeDbError({code: ConstraintViolationError}) =>
       Error({name: "Constraint Violation Error", reason: "One of the inputs was invalid"})
+    | EdgeDbError({code: MissingRequiredError}) =>
+      Error({name: "Missing Required Error", reason: "One of the required fields was missing"})
     | EdgeDbError(err) =>
       Console.error(err)
       Error({name: "EdgeDB Error", reason: "Failed to write to db. Check server logs."}) //@Make a helper for edgedb error codes
