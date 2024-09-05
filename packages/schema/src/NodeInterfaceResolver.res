@@ -7,6 +7,7 @@ let typeMap: Interface_node.typeMap<int> = {
   todo: 2,
   listing: 3,
   skill: 4,
+  profile: 5,
 }
 
 /** A typemap helping us produce compressed node IDs via the map defined above. */
@@ -60,6 +61,11 @@ let node = async (_: Schema.query, ~id, ~ctx: ResGraphContext.context): option<
       switch await ctx.dataLoaders.listing.byId->DataLoader.load((ctx.edgedbClient, id)) {
       | None => None
       | Some(listing) => Some(Listing(listing))
+      }
+    | Profile =>
+      switch await ctx.dataLoaders.profile.byId->DataLoader.load((ctx.edgedbClient, id)) {
+      | None => None
+      | Some(profile) => Some(Profile(profile))
       }
     | Skill => panic("Not implemented")
     }
