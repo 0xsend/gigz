@@ -4,15 +4,21 @@
 
 module Resolver = {
   @gql.interfaceResolver("node")
-  type t = Listing(Listing.listing) | Skill(Listing.skill) | Todo(Todo.todo) | User(User.user)
+  type t =
+    | Listing(Listing.listing)
+    | Profile(Profile.profile)
+    | Skill(Listing.skill)
+    | Todo(Todo.todo)
+    | User(User.user)
 }
 
 module ImplementedBy = {
-  type t = Listing | Skill | Todo | User
+  type t = Listing | Profile | Skill | Todo | User
 
   let decode = (str: string) =>
     switch str {
     | "Listing" => Some(Listing)
+    | "Profile" => Some(Profile)
     | "Skill" => Some(Skill)
     | "Todo" => Some(Todo)
     | "User" => Some(User)
@@ -24,6 +30,7 @@ module ImplementedBy = {
 
 type typeMap<'a> = {
   @as("Listing") listing: 'a,
+  @as("Profile") profile: 'a,
   @as("Skill") skill: 'a,
   @as("Todo") todo: 'a,
   @as("User") user: 'a,

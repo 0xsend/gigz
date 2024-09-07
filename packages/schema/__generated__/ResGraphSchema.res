@@ -159,10 +159,14 @@ let t_PageInfo: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_PageInfo = () => t_PageInfo.contents
 let t_Pills: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Pills = () => t_Pills.contents
+let t_Profile: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_Profile = () => t_Profile.contents
 let t_Query: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Query = () => t_Query.contents
 let t_Skill: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Skill = () => t_Skill.contents
+let t_Socials: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
+let get_Socials = () => t_Socials.contents
 let t_Todo: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
 let get_Todo = () => t_Todo.contents
 let t_TodoConnection: ref<GraphQLObjectType.t> = Obj.magic({"contents": Js.null})
@@ -331,6 +335,7 @@ let union_TodoUpdateResult_resolveType = (v: TodoMutations.todoUpdateResult) =>
 let interface_Node_resolveType = (v: Interface_node.Resolver.t) =>
   switch v {
   | User(_) => "User"
+  | Profile(_) => "Profile"
   | Listing(_) => "Listing"
   | Skill(_) => "Skill"
   | Todo(_) => "Todo"
@@ -961,6 +966,97 @@ t_Pills.contents = GraphQLObjectType.make({
       },
     }->makeFields,
 })
+t_Profile.contents = GraphQLObjectType.make({
+  name: "Profile",
+  description: ?None,
+  interfaces: [get_Node()],
+  fields: () =>
+    {
+      "bio": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["bio"]
+        }),
+      },
+      "categories": {
+        typ: GraphQLListType.make(enum_Category->GraphQLEnumType.toGraphQLType->nonNull)
+        ->GraphQLListType.toGraphQLType
+        ->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["categories"]
+        }),
+      },
+      "createdAt": {
+        typ: Scalars.float->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["createdAt"]
+        }),
+      },
+      "hearts": {
+        typ: Scalars.float->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["hearts"]
+        }),
+      },
+      "id": {
+        typ: Scalars.id->Scalars.toGraphQLType->nonNull,
+        description: "The id of the object.",
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          NodeInterfaceResolver.id(src, ~typename=Profile)
+        }),
+      },
+      "pills": {
+        typ: get_Pills()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["pills"]
+        }),
+      },
+      "portfolioLink": {
+        typ: Scalars.string->Scalars.toGraphQLType,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["portfolioLink"]
+        }),
+      },
+      "sendid": {
+        typ: Scalars.float->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["sendid"]
+        }),
+      },
+      "socials": {
+        typ: get_Socials()->GraphQLObjectType.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["socials"]
+        }),
+      },
+    }->makeFields,
+})
 t_Query.contents = GraphQLObjectType.make({
   name: "Query",
   description: ?None,
@@ -1093,6 +1189,16 @@ t_Query.contents = GraphQLObjectType.make({
           )
         }),
       },
+      "profileBySendId": {
+        typ: get_Profile()->GraphQLObjectType.toGraphQLType,
+        description: "Get a profile by it's sendid",
+        deprecationReason: ?None,
+        args: {"sendid": {typ: Scalars.float->Scalars.toGraphQLType->nonNull}}->makeArgs,
+        resolve: makeResolveFn((src, args, ctx, info) => {
+          let src = typeUnwrapper(src)
+          ProfileResolvers.profileBySendId(src, ~ctx, ~sendid=args["sendid"])
+        }),
+      },
     }->makeFields,
 })
 t_Skill.contents = GraphQLObjectType.make({
@@ -1117,6 +1223,32 @@ t_Skill.contents = GraphQLObjectType.make({
         resolve: makeResolveFn((src, _args, _ctx, _info) => {
           let src = typeUnwrapper(src)
           src["name"]
+        }),
+      },
+    }->makeFields,
+})
+t_Socials.contents = GraphQLObjectType.make({
+  name: "Socials",
+  description: ?None,
+  interfaces: [],
+  fields: () =>
+    {
+      "telegram": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["telegram"]
+        }),
+      },
+      "x": {
+        typ: Scalars.string->Scalars.toGraphQLType->nonNull,
+        description: ?None,
+        deprecationReason: ?None,
+        resolve: makeResolveFn((src, _args, _ctx, _info) => {
+          let src = typeUnwrapper(src)
+          src["x"]
         }),
       },
     }->makeFields,
@@ -1513,7 +1645,9 @@ let schema = GraphQLSchemaType.make({
     get_Todo()->GraphQLObjectType.toGraphQLType,
     get_MakeSessionResultError()->GraphQLObjectType.toGraphQLType,
     get_MakeListingResultError()->GraphQLObjectType.toGraphQLType,
+    get_Socials()->GraphQLObjectType.toGraphQLType,
     get_PageInfo()->GraphQLObjectType.toGraphQLType,
+    get_Profile()->GraphQLObjectType.toGraphQLType,
     get_ListingEdge()->GraphQLObjectType.toGraphQLType,
     get_MakeListingResultOk()->GraphQLObjectType.toGraphQLType,
     get_User()->GraphQLObjectType.toGraphQLType,

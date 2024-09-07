@@ -306,6 +306,20 @@ type Pills {
   send: BigInt!
 }
 
+type Profile implements Node {
+  categories: [Category!]!
+  createdAt: Float!
+  sendid: Float!
+  bio: String
+  hearts: Float
+  pills: Pills!
+  portfolioLink: String
+  socials: Socials!
+
+  """The id of the object."""
+  id: ID!
+}
+
 type Query {
 
   """The currently logged in user."""
@@ -316,6 +330,9 @@ type Query {
 
   """The current time on the server, as a timestamp."""
   currentTime: Float
+
+  """Get a profile by it's sendid"""
+  profileBySendId(sendid: Float!): Profile
 
   """Fetches objects given their IDs."""
   nodes(ids: [ID!]!): [Node]!
@@ -338,6 +355,11 @@ type Skill implements Node {
 
   """The id of the object."""
   id: ID!
+}
+
+type Socials {
+  x: String!
+  telegram: String!
 }
 
 

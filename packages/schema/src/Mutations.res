@@ -52,7 +52,6 @@ type makeListingResult =
   | Ok({newListing: Listing.listing})
   | Error({name: string, reason: string})
 
-
 @gql.field
 let makeListing = async (
   _: Schema.mutation,
